@@ -15,6 +15,7 @@ import (
 	"github.com/CrazyThursdayV50/goex/binance/variables"
 	"github.com/CrazyThursdayV50/pkgo/builtin"
 	gmap "github.com/CrazyThursdayV50/pkgo/builtin/map"
+	"github.com/CrazyThursdayV50/pkgo/builtin/wrap"
 	"github.com/CrazyThursdayV50/pkgo/cron"
 	"github.com/CrazyThursdayV50/pkgo/goo"
 	"github.com/CrazyThursdayV50/pkgo/json"
@@ -31,6 +32,36 @@ type API struct {
 	resultTimeout time.Duration
 	apiKey        string
 	secretKey     ed25519.PrivateKey
+}
+
+func request[reqData any, resultData any](ctx context.Context, api *API, params *models.WsAPIParams[reqData]) (builtin.UnWrapper[resultData], error) {
+	params.Id = api.reqId()
+
+	data, err := params.BinaryMarshal()
+	if err != nil {
+		return wrap.Nil[resultData](), err
+	}
+
+	err = api.client.Send(data)
+	if err != nil {
+		return wrap.Nil[resultData](), err
+	}
+
+	result := api.getResult(ctx, params.Id)
+	if result == nil {
+		return wrap.Nil[resultData](), errors.New("request timeout")
+	}
+
+	if result.Status == 200 {
+		var data resultData
+		err = json.JSON().Unmarshal(result.Result, &data)
+		if err != nil {
+			return nil, err
+		}
+		return wrap.Wrap(data), nil
+	}
+
+	return wrap.Nil[resultData](), fmt.Errorf("request failed with status: %d, error: %s", result.Status, result.Result)
 }
 
 func (api *API) getResult(ctx context.Context, id string) *models.WsAPIResult {
@@ -57,153 +88,44 @@ func (api *API) reqId() string {
 
 func (api *API) Stop() { api.client.Stop() }
 
-func (api *API) Ping(ctx context.Context) error {
+func (api *API) Ping(ctx context.Context) (builtin.UnWrapper[any], error) {
 	params := models.NewWsPingParams()
 	params.Id = api.reqId()
-
-	data, err := params.BinaryMarshal()
-	if err != nil {
-		return err
-	}
-
-	err = api.client.Send(data)
-	if err != nil {
-		return err
-	}
-
-	result := api.getResult(ctx, params.Id)
-	if result.Status == 200 {
-		return nil
-	}
-
-	return errors.New("connect failed")
+	return request[any, any](ctx, api, params)
 }
 
-func (api *API) ExchangeInfo(ctx context.Context, req *models.WsExchangeInfoParamsData) (*models.WsExchangeInfoResultData, error) {
+func (api *API) ExchangeInfo(ctx context.Context, req *models.WsExchangeInfoParamsData) (builtin.UnWrapper[*models.WsExchangeInfoResultData], error) {
 	params := models.NewWsExchangeInfoParams()
-	params.Id = api.reqId()
 	params.Params = req
-
-	data, err := params.BinaryMarshal()
-	if err != nil {
-		return nil, err
-	}
-
-	err = api.client.Send(data)
-	if err != nil {
-		return nil, err
-	}
-
-	result := api.getResult(ctx, params.Id)
-	if result.Status == 200 {
-		var data models.WsExchangeInfoResultData
-		err = json.JSON().Unmarshal(result.Result, &data)
-		if err != nil {
-			return nil, err
-		}
-		return &data, nil
-	}
-
-	return nil, err
+	return request[*models.WsExchangeInfoParamsData, *models.WsExchangeInfoResultData](ctx, api, params)
 }
 
-func (api *API) Order(ctx context.Context, req *models.WsOrderParamsData) (*models.WsOrderResultData, error) {
+func (api *API) Order(ctx context.Context, req *models.WsOrderParamsData) (builtin.UnWrapper[*models.WsOrderResultData], error) {
 	params := models.NewWsOrderParams()
-	params.Id = api.reqId()
 	params.Params = req
 	api.Sign(req)
-
-	data, err := params.BinaryMarshal()
-	if err != nil {
-		return nil, err
-	}
-
-	api.logger.Infof("new order: %s", data)
-	err = api.client.Send(data)
-	if err != nil {
-		return nil, err
-	}
-
-	result := api.getResult(ctx, params.Id)
-	if result == nil {
-		return nil, errors.New("request timeout")
-	}
-
-	if result.Status == 200 {
-		var data models.WsOrderResultData
-		err = json.JSON().Unmarshal(result.Result, &data)
-		if err != nil {
-			return nil, err
-		}
-		return &data, nil
-	}
-
-	return nil, fmt.Errorf("request failed with status: %d", result.Status)
+	return request[*models.WsOrderParamsData, *models.WsOrderResultData](ctx, api, params)
 }
 
-func (api *API) Auth(ctx context.Context, req *models.WsAPIAuthParamsData) (*models.WsAPIAuthResultData, error) {
+func (api *API) Auth(ctx context.Context, req *models.WsAPIAuthParamsData) (builtin.UnWrapper[*models.WsAPIAuthResultData], error) {
 	params := models.NewWsAPIAuthParams()
-	params.Id = api.reqId()
 	params.Params = req
 	api.Sign(req)
-
-	data, err := params.BinaryMarshal()
-	if err != nil {
-		return nil, err
-	}
-
-	api.logger.Infof("Auth paload: %s", data)
-
-	err = api.client.Send(data)
-	if err != nil {
-		return nil, err
-	}
-
-	result := api.getResult(ctx, params.Id)
-	if result == nil {
-		return nil, errors.New("request timeout")
-	}
-
-	if result.Status == 200 {
-		var data models.WsAPIAuthResultData
-		err = json.JSON().Unmarshal(result.Result, &data)
-		if err != nil {
-			return nil, err
-		}
-		return &data, nil
-	}
-
-	return nil, fmt.Errorf("request failed with status: %d", result.Status)
+	return request[*models.WsAPIAuthParamsData, *models.WsAPIAuthResultData](ctx, api, params)
 }
 
-// TestOrder 发送测试下单请求
-func (api *API) TestOrder(ctx context.Context, req *models.WsOrderParamsData) error {
+func (api *API) TestOrder(ctx context.Context, req *models.WsOrderParamsData) (builtin.UnWrapper[*models.WsOrderResultData], error) {
 	params := models.NewWsTestOrderParams()
-	params.Id = api.reqId()
 	params.Params = req
 	api.Sign(req)
+	return request[*models.WsOrderParamsData, *models.WsOrderResultData](ctx, api, params)
+}
 
-	data, err := params.BinaryMarshal()
-	if err != nil {
-		return err
-	}
-
-	api.logger.Infof("order payload: %s", data)
-	err = api.client.Send(data)
-	if err != nil {
-		return err
-	}
-
-	result := api.getResult(ctx, params.Id)
-	if result == nil {
-		return errors.New("request timeout")
-	}
-
-	if result.Status != 200 {
-		return fmt.Errorf("request failed with status: %d, error: %s", result.Status, result.Result)
-	}
-
-	return nil
+func (api *API) AccountStatus(ctx context.Context, req *models.WsAccountStatusParamsData) (builtin.UnWrapper[*models.WsAccountStatusResultData], error) {
+	params := models.NewWsAccountStatusParams()
+	params.Params = req
+	api.Sign(req)
+	return request[*models.WsAccountStatusParamsData, *models.WsAccountStatusResultData](ctx, api, params)
 }
 
 // New 创建一个新的 WebSocket API 客户端

@@ -4,9 +4,10 @@ import (
 	"context"
 
 	"github.com/CrazyThursdayV50/goex/binance/models"
+	"github.com/CrazyThursdayV50/pkgo/builtin"
 )
 
-func (api *API) MarketOrder(ctx context.Context, symbol, marketQuantity string, isBuy bool) (*models.WsOrderResultData, error) {
+func (api *API) MarketOrder(ctx context.Context, symbol, marketQuantity string, isBuy bool) (builtin.UnWrapper[*models.WsOrderResultData], error) {
 	order := models.WsOrderParamsData{
 		Type: models.MARKET,
 	}

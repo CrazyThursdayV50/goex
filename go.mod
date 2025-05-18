@@ -3,7 +3,7 @@ module github.com/CrazyThursdayV50/goex
 go 1.24.1
 
 require (
-	github.com/CrazyThursdayV50/pkgo v0.1.9-0.20250516034112-c6eed83b262b
+	github.com/CrazyThursdayV50/pkgo v0.1.9-0.20250518045739-e571be8346ee
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/shopspring/decimal v1.4.0
@@ -17,5 +17,3 @@ require (
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 )
-
-replace github.com/CrazyThursdayV50/pkgo v0.1.9-0.20250516034112-c6eed83b262b => /Users/alex/projects/alex/pkgo

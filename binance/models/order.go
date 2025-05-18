@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -104,16 +103,12 @@ func (p *WsOrderParamsData) Map() map[string]string {
 }
 
 // WsOrderParams WebSocket API 下单请求
-type WsOrderParams WsAPIParams[*WsOrderParamsData]
+type WsOrderParams = WsAPIParams[*WsOrderParamsData]
 
 func NewWsOrderParams() *WsOrderParams {
 	return &WsOrderParams{
 		Method: "order.place",
 	}
-}
-
-func (p *WsOrderParams) BinaryMarshal() ([]byte, error) {
-	return json.Marshal(p)
 }
 
 // WsOrderResultData WebSocket API 下单响应数据

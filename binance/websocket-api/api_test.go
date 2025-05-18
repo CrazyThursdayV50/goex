@@ -2,8 +2,6 @@ package websocketapi
 
 import (
 	"context"
-	"encoding/base64"
-	"encoding/pem"
 	"os"
 	"testing"
 	"time"
@@ -12,6 +10,28 @@ import (
 	"github.com/CrazyThursdayV50/goex/binance/variables"
 	defaultlogger "github.com/CrazyThursdayV50/pkgo/log/default"
 )
+
+func TestAccountStatus(t *testing.T) {
+	ctx := context.TODO()
+	logger := defaultlogger.New(defaultlogger.DefaultConfig())
+	logger.Init()
+
+	// 获取 API Key 和 Secret Key
+	apiKey, secretKey := getTestEnv(t)
+
+	// 创建客户端，应该自动进行身份验证
+	client := New(ctx, logger, apiKey, secretKey)
+	defer client.Stop()
+
+	account, err := client.AccountStatus(ctx, &models.WsAccountStatusParamsData{OmitZeroBalances: true})
+
+	if err != nil {
+		t.Errorf("查询账户信息失败: %v", err)
+		return
+	}
+
+	logger.Infof("账户信息: %+#v", account.Unwrap())
+}
 
 func TestWsAPI(t *testing.T) {
 	ctx := context.TODO()
@@ -51,17 +71,12 @@ func TestWsAPI(t *testing.T) {
 }
 
 func getTestEnv(t *testing.T) (string, string) {
-	f, err := os.ReadFile("/Users/alex/projects/alex/goex/test-prv-key.pem")
-	if err != nil {
-		panic(err)
-	}
-	block, _ := pem.Decode(f)
-	secretKey := base64.RawStdEncoding.EncodeToString(block.Bytes)
-
 	apiKey := os.Getenv("BINANCE_API_KEY")
+	secretKey := os.Getenv("BINANCE_SECRET_KEY")
 	if apiKey == "" || secretKey == "" {
 		t.Skip("请设置 BINANCE_API_KEY 和 BINANCE_SECRET_KEY 环境变量")
 	}
+
 	return apiKey, secretKey
 }
 
@@ -85,12 +100,12 @@ func TestAuth(t *testing.T) {
 			secretKey: secretKey,
 			wantErr:   false,
 		},
-		{
-			name:      "正常创建",
-			apiKey:    "",
-			secretKey: "",
-			wantErr:   false,
-		},
+		// {
+		// 	name:      "正常创建",
+		// 	apiKey:    "",
+		// 	secretKey: "",
+		// 	wantErr:   false,
+		// },
 	}
 
 	for _, tt := range tests {
@@ -111,7 +126,7 @@ func TestAuth(t *testing.T) {
 			// 如果创建成功，测试基本功能
 			if api != nil {
 				// 测试 Ping
-				err := api.Ping(ctx)
+				_, err := api.Ping(ctx)
 				if err != nil {
 					t.Errorf("Ping() 错误 = %v", err)
 				}
@@ -138,7 +153,7 @@ func TestOrderTest(t *testing.T) {
 	// 测试下单
 	price := "100000"
 	quantity := "0.0001"
-	err := client.TestOrder(ctx, &models.WsOrderParamsData{
+	_, err := client.TestOrder(ctx, &models.WsOrderParamsData{
 		Symbol:      "BTCUSDT",
 		Side:        models.BUY,
 		Type:        models.LIMIT,

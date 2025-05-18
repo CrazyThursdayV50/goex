@@ -4,7 +4,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 )
 
@@ -29,16 +28,12 @@ func (p *WsAPIAuthParamsData) Map() map[string]string {
 	return params
 }
 
-type WsAPIAuthParams WsAPIParams[*WsAPIAuthParamsData]
+type WsAPIAuthParams = WsAPIParams[*WsAPIAuthParamsData]
 
 func NewWsAPIAuthParams() *WsAPIAuthParams {
 	return &WsAPIAuthParams{
 		Method: "session.logon",
 	}
-}
-
-func (p *WsAPIAuthParams) BinaryMarshal() ([]byte, error) {
-	return json.Marshal(p)
 }
 
 // WsAPIAuthResultData WebSocket API 身份验证响应数据
