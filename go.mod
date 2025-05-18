@@ -1,4 +1,4 @@
-module goex
+module github.com/CrazyThursdayV50/goex
 
 go 1.24.1
 

@@ -2,8 +2,8 @@ package binance
 
 import (
 	"context"
-	"goex/binance/variables"
 
+	"github.com/CrazyThursdayV50/goex/binance/variables"
 	"github.com/CrazyThursdayV50/pkgo/log"
 	"github.com/CrazyThursdayV50/pkgo/websocket/client"
 )

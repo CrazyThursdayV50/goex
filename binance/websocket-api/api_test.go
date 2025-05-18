@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/pem"
-	"goex/binance/models"
-	"goex/binance/variables"
 	"os"
 	"testing"
 	"time"
 
+	"github.com/CrazyThursdayV50/goex/binance/models"
+	"github.com/CrazyThursdayV50/goex/binance/variables"
 	defaultlogger "github.com/CrazyThursdayV50/pkgo/log/default"
 )
 

@@ -2,9 +2,9 @@ package models
 
 import (
 	"fmt"
-	"goex/binance/variables"
 	"strings"
 
+	"github.com/CrazyThursdayV50/goex/binance/variables"
 	"github.com/CrazyThursdayV50/pkgo/builtin/collector"
 	"github.com/shopspring/decimal"
 )

@@ -2,7 +2,8 @@ package websocketapi
 
 import (
 	"context"
-	"goex/binance/models"
+
+	"github.com/CrazyThursdayV50/goex/binance/models"
 )
 
 func (api *API) MarketOrder(ctx context.Context, symbol, marketQuantity string, isBuy bool) (*models.WsOrderResultData, error) {

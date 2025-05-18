@@ -3,11 +3,11 @@ package websocketstreams
 import (
 	"context"
 	"fmt"
-	"goex/binance"
-	"goex/binance/models"
-	"goex/binance/variables"
 	"strings"
 
+	"github.com/CrazyThursdayV50/goex/binance"
+	"github.com/CrazyThursdayV50/goex/binance/models"
+	"github.com/CrazyThursdayV50/goex/binance/variables"
 	"github.com/CrazyThursdayV50/pkgo/builtin/collector"
 	"github.com/CrazyThursdayV50/pkgo/json"
 	"github.com/CrazyThursdayV50/pkgo/log"

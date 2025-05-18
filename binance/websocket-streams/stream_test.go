@@ -2,10 +2,10 @@ package websocketstreams
 
 import (
 	"context"
-	"goex/binance/models"
 	"testing"
 	"time"
 
+	"github.com/CrazyThursdayV50/goex/binance/models"
 	defaultlogger "github.com/CrazyThursdayV50/pkgo/log/default"
 )
 
