@@ -13,7 +13,6 @@ import (
 func handler(responseMap builtin.MapAPI[string, *models.WsAPIResult]) func(context.Context, log.Logger, int, []byte, func(error)) (int, []byte) {
 
 	return func(ctx context.Context, l log.Logger, i int, b []byte, f func(error)) (int, []byte) {
-		l.Infof("receive[%d]: %s", i, b)
 		var result models.WsAPIResult
 		err := json.JSON().Unmarshal(b, &result)
 		if err != nil {

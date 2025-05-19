@@ -37,6 +37,7 @@ const COMBINED_STREAM_URL = WS_STREAM_BASE_URL + "/stream?streams=%s"
 // Stream Names: <symbol>@depth<levels> OR <symbol>@depth<levels>@100ms
 const PARTIAL_BOOK_DEPTH = "%s@depth%d"
 const PARTIAL_BOOK_DEPTH_100ms = "%s@depth%d@100ms"
+const INDIVIDUAL_BOOK_TICKER = "%s@bookTicker"
 
 func StreamURL() string {
 	if istest {

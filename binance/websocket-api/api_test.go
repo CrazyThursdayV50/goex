@@ -2,6 +2,10 @@ package websocketapi
 
 import (
 	"context"
+	"crypto/ed25519"
+	"crypto/rand"
+	"crypto/x509"
+	"encoding/pem"
 	"os"
 	"testing"
 	"time"
@@ -10,6 +14,38 @@ import (
 	"github.com/CrazyThursdayV50/goex/binance/variables"
 	defaultlogger "github.com/CrazyThursdayV50/pkgo/log/default"
 )
+
+func TestGenEd25519Keys(t *testing.T) {
+	publickey, privatekey, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		t.Errorf("err: %v", err)
+		return
+	}
+
+	
+	privateBytes, err := x509.MarshalPKCS8PrivateKey(privatekey)
+	if err != nil {
+		t.Errorf("err: %v", err)
+		return
+	}
+	
+	publicBytes, err := x509.MarshalPKIXPublicKey(publickey)
+	if err != nil {
+		t.Errorf("err: %v", err)
+		return
+	}
+
+	privatepem := pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: privateBytes})
+	publicpem := pem.EncodeToMemory(&pem.Block{Type: "PUBLIC KEY", Bytes: publicBytes})
+
+	// privateStr := base64.StdEncoding.EncodeToString(privateBytes)
+	// publicStr := base64.StdEncoding.EncodeToString(publicBytes)
+
+	// t.Logf("private: %s", privateStr)
+	// t.Logf("public: %s", publicStr)
+	t.Logf("private: %s", privatepem)
+	t.Logf("public: %s", publicpem)
+}
 
 func TestAccountStatus(t *testing.T) {
 	ctx := context.TODO()

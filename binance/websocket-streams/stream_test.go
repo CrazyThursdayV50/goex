@@ -36,3 +36,17 @@ func TestCombinedStream(t *testing.T) {
 	time.Sleep(time.Second * 10)
 	client.Stop()
 }
+
+func TestIndividualSymbolBookTicker(t *testing.T) {
+	ctx := context.TODO()
+	logger := defaultlogger.New(defaultlogger.DefaultConfig())
+	logger.Init()
+	symbols := []string{"SOLBTC", "BNBBTC", "BNBUSDT"}
+	handler := func(event *models.IndividualSymbolBookTicker) {
+		logger.Infof("depth: %s", event.String())
+	}
+
+	client := IndividualSymbolBookTickerStream(ctx, logger, symbols, handler)
+	time.Sleep(time.Second * 10)
+	client.Stop()
+}

@@ -22,7 +22,7 @@ func newStream(streamer Streamer, ctx context.Context, logger log.Logger, handle
 	return binance.NewClient(ctx, logger, fmt.Sprintf(variables.StreamURL(), streamer.StreamName()), handler)
 }
 
-func newCombinedStream(streamers []Streamer, ctx context.Context, logger log.Logger, handler client.MessageHandler) *binance.Client {
+func newCombinedStream(ctx context.Context, logger log.Logger, streamers []Streamer, handler client.MessageHandler) *binance.Client {
 	return binance.NewClient(ctx, logger, fmt.Sprintf(variables.CombinedStreamURL(), strings.Join(collector.Slice(streamers, func(_ int, streamer Streamer) (bool, string) { return true, streamer.StreamName() }), "/")), handler)
 }
 
@@ -32,7 +32,7 @@ type partialBookDepthStreamer struct {
 }
 
 func (s partialBookDepthStreamer) StreamName() string {
-	return fmt.Sprintf("%s@depth%d", strings.ToLower(s.symbol), s.level)
+	return fmt.Sprintf(variables.PARTIAL_BOOK_DEPTH, strings.ToLower(s.symbol), s.level)
 
 }
 
@@ -42,7 +42,7 @@ type partialBookDepth100msStreamer struct {
 }
 
 func (s partialBookDepth100msStreamer) StreamName() string {
-	return fmt.Sprintf("%s@depth%d@100ms", strings.ToLower(s.symbol), s.level)
+	return fmt.Sprintf(variables.PARTIAL_BOOK_DEPTH_100ms, strings.ToLower(s.symbol), s.level)
 }
 
 func PartialBookDepth5Stream(ctx context.Context, logger log.Logger, symbol string, handler WsPartialDepthHandler) *binance.Client {
@@ -68,11 +68,11 @@ func PartialBookDepth5Stream(ctx context.Context, logger log.Logger, symbol stri
 
 func PartialBookDepth5CombinedStream(ctx context.Context, logger log.Logger, symbols []string, handler WsPartialDepthCombinedHandler) *binance.Client {
 	client := newCombinedStream(
+		ctx,
+		logger,
 		collector.Slice(symbols, func(_ int, symbol string) (bool, Streamer) {
 			return true, partialBookDepth100msStreamer{symbol: symbol, level: 5}
 		}),
-		ctx,
-		logger,
 		func(ctx context.Context, l log.Logger, i int, b []byte, f func(error)) (int, []byte) {
 			// l.Infof("data: %s", b)
 			var event models.PartialDepthCombinedEvent
