@@ -9,6 +9,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+// PartialDepthEvent 深度数据事件
 //	{
 //	  "lastUpdateId": 160,  // Last update ID
 //	  "bids": [             // Bids to be updated
@@ -24,7 +25,6 @@ import (
 //	    ]
 //	  ]
 //	}
-
 type PartialDepthEvent struct {
 	LastupdateId int64               `json:"lastUpdateId"`
 	Bids         [][]decimal.Decimal `json:"bids"`
@@ -47,6 +47,7 @@ func (m *PartialDepthEvent) PartialDepthData() *PartialDepthData {
 	return &data
 }
 
+// orderbook 订单簿条目
 type orderbook struct {
 	Price    decimal.Decimal
 	Quantity decimal.Decimal
@@ -71,6 +72,7 @@ func newOrderBook(sli []decimal.Decimal) *orderbook {
 	return &b
 }
 
+// PartialDepthData 深度数据
 type PartialDepthData struct {
 	LastupdateId int64
 	Bids         []*orderbook
@@ -85,14 +87,17 @@ func (d *PartialDepthData) String() string {
 	return fmt.Sprintf("[%d]asks: %s, bids: %s", d.LastupdateId, d.Asks, d.Bids)
 }
 
+// CombinedEvent 组合流事件通用结构
 // {"stream":"bnbusdt@depth5@100ms","data":{"lastUpdateId":13919791373,"bids":[["656.72000000","29.05200000"],["656.71000000","11.68500000"],["656.70000000","1.01600000"],["656.69000000","0.00800000"],["656.68000000","0.02500000"]],"asks":[["656.73000000","21.01200000"],["656.74000000","0.02400000"],["656.75000000","0.02400000"],["656.76000000","0.17100000"],["656.77000000","0.62500000"]]}}
 type CombinedEvent[T any] struct {
 	Stream string `json:"stream"`
 	Data   T      `json:"data"`
 }
 
+// PartialDepthCombinedEvent 组合深度数据事件
 type PartialDepthCombinedEvent CombinedEvent[*PartialDepthEvent]
 
+// PartialDepthCombinedData 组合深度数据
 type PartialDepthCombinedData struct {
 	Symbol string
 	PartialDepthData
@@ -115,43 +120,4 @@ func (e *PartialDepthCombinedEvent) PartialDepthCombinedData() *PartialDepthComb
 
 	data.PartialDepthData = *e.Data.PartialDepthData()
 	return &data
-}
-
-/*
-	{
-	  "u":400900217,     // order book updateId
-	  "s":"BNBUSDT",     // symbol
-	  "b":"25.35190000", // best bid price
-	  "B":"31.21000000", // best bid qty
-	  "a":"25.36520000", // best ask price
-	  "A":"40.66000000"  // best ask qty
-	}
-*/
-
-type IndividualSymbolBookTickerEvent = CombinedEvent[*IndividualSymbolBookTicker]
-
-type IndividualSymbolBookTicker struct {
-	UpdateId    int64           `json:"u"`
-	Symbol      string          `json:"s"`
-	BidPrice    decimal.Decimal `json:"b"`
-	BidQuantity decimal.Decimal `json:"B"`
-	AskPrice    decimal.Decimal `json:"a"`
-	AskQuantity decimal.Decimal `json:"A"`
-}
-
-// type IndividualSymbolBookTicker struct {
-// 	UpdateId    int64  `json:"u"`
-// 	Symbol      string `json:"d"`
-// 	BidPrice    string `json:"b"`
-// 	BidQuantity string `json:"B"`
-// 	AskPrice    string `json:"a"`
-// 	AskQuantity string `json:"A"`
-// }
-
-func (e *IndividualSymbolBookTicker) String() string {
-	if e == nil {
-		return "nil"
-	}
-
-	return fmt.Sprintf("%s - [%d]ask: %s@%s, bid: %s@%s", e.Symbol, e.UpdateId, e.AskQuantity, e.AskPrice, e.BidQuantity, e.BidPrice)
-}
+} 

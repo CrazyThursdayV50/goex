@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CrazyThursdayV50/goex/binance/models"
 	"github.com/CrazyThursdayV50/goex/binance/variables"
+	"github.com/CrazyThursdayV50/goex/binance/websocket-api/models"
 	defaultlogger "github.com/CrazyThursdayV50/pkgo/log/default"
 )
 
@@ -48,6 +48,10 @@ func TestGenEd25519Keys(t *testing.T) {
 }
 
 func TestAccountStatus(t *testing.T) {
+	if testing.Short() {
+		t.Skip("跳过需要环境变量和网络连接的测试")
+	}
+	
 	ctx := context.TODO()
 	logger := defaultlogger.New(defaultlogger.DefaultConfig())
 	logger.Init()
@@ -70,6 +74,10 @@ func TestAccountStatus(t *testing.T) {
 }
 
 func TestWsAPI(t *testing.T) {
+	if testing.Short() {
+		t.Skip("跳过需要环境变量和网络连接的测试")
+	}
+	
 	ctx := context.TODO()
 	logger := defaultlogger.New(defaultlogger.DefaultConfig())
 	logger.Init()
@@ -117,6 +125,10 @@ func getTestEnv(t *testing.T) (string, string) {
 }
 
 func TestAuth(t *testing.T) {
+	if testing.Short() {
+		t.Skip("跳过需要环境变量和网络连接的测试")
+	}
+	
 	apiKey, secretKey := getTestEnv(t)
 
 	// 创建日志记录器
@@ -174,7 +186,32 @@ func TestAuth(t *testing.T) {
 	}
 }
 
+func TestExchangeInfo(t *testing.T) {
+	if testing.Short() {
+		t.Skip("跳过需要环境变量和网络连接的测试")
+	}
+
+	ctx := context.TODO()
+	logger := defaultlogger.New(defaultlogger.DefaultConfig())
+	logger.Init()
+  
+	variables.SetIsTest()
+	client := New(ctx, logger, "", "")
+	defer client.Stop()
+
+	info, err :=client.ExchangeInfo(ctx, &models.WsExchangeInfoParamsData{SymbolStatus: "TRADING",Permissions: []string{"SPOT"}})
+	if err!=nil{
+		t.Errorf("获取交易所信息失败: %v", err)
+		return
+	}
+
+	logger.Infof("交易所信息: %+#v", info.Unwrap())
+}
 func TestOrderTest(t *testing.T) {
+	if testing.Short() {
+		t.Skip("跳过需要环境变量和网络连接的测试")
+	}
+	
 	ctx := context.TODO()
 	logger := defaultlogger.New(defaultlogger.DefaultConfig())
 	logger.Init()

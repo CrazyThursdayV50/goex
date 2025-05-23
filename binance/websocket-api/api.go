@@ -9,10 +9,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/CrazyThursdayV50/goex/binance"
-	"github.com/CrazyThursdayV50/goex/binance/models"
-	"github.com/CrazyThursdayV50/goex/binance/signer"
 	"github.com/CrazyThursdayV50/goex/binance/variables"
+	"github.com/CrazyThursdayV50/goex/binance/websocket-api/models"
+	"github.com/CrazyThursdayV50/goex/binance/websocket-api/signer"
 	"github.com/CrazyThursdayV50/pkgo/builtin"
 	gmap "github.com/CrazyThursdayV50/pkgo/builtin/map"
 	"github.com/CrazyThursdayV50/pkgo/builtin/wrap"
@@ -27,7 +26,7 @@ import (
 
 type API struct {
 	logger        log.Logger
-	client        *binance.Client
+	client        *Client
 	resultMap     builtin.MapAPI[string, *models.WsAPIResult]
 	resultTimeout time.Duration
 	apiKey        string
@@ -131,7 +130,7 @@ func (api *API) AccountStatus(ctx context.Context, req *models.WsAccountStatusPa
 // New 创建一个新的 WebSocket API 客户端
 func New(ctx context.Context, logger log.Logger, apiKey, secretKey string) *API {
 	resultMap := gmap.Make[string, *models.WsAPIResult](0)
-	c := binance.NewClient(ctx, logger, variables.WsAPIURL(), handler(resultMap))
+	c := NewClient(ctx, logger, variables.WsAPIURL(), handler(resultMap))
 
 	c.WsClient.UpdateOptions(client.WithPingLoop(func(done <-chan struct{}, conn *websocket.Conn) {
 		ctx, cancel := context.WithCancel(context.TODO())

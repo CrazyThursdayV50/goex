@@ -1,9 +1,69 @@
 package models
 
 import (
-	"encoding/json"
 	"fmt"
+
+	"github.com/CrazyThursdayV50/pkgo/json"
 )
+
+// WsExchangeInfoParamsData 交易所信息查询请求参数
+type WsExchangeInfoParamsData struct {
+	Symbol  string   `json:"symbol,omitempty"`
+	Symbols []string `json:"symbols,omitempty"`
+
+	// https://github.com/binance/binance-spot-api-docs/blob/master/enums_CN.md#account-and-symbol-permissions
+	Permissions []string `json:"permissions,omitempty"`
+
+	ShowPermissionSets bool `json:"showPermissionSets,omitempty"`
+
+	// TRADING, HALT, BREAK
+	SymbolStatus string `json:"symbolStatus,omitempty"`
+}
+
+type WsExchangeInfoParams = WsAPIParams[*WsExchangeInfoParamsData]
+
+func NewWsExchangeInfoParams() *WsExchangeInfoParams {
+	return &WsExchangeInfoParams{
+		Method: "exchangeInfo",
+	}
+}
+
+// WsExchangeInfoSymbolData 交易对信息
+type WsExchangeInfoSymbolData struct {
+	Symbol                          string     `json:"symbol"`
+	Status                          string     `json:"status"`
+	BaseAsset                       string     `json:"baseAsset"`
+	BaseAssetPrecision              int        `json:"baseAssetPrecision"`
+	QuoteAsset                      string     `json:"quoteAsset"`
+	QuotePrecision                  int        `json:"quotePrecision"`
+	QuoteAssetPrecision             int        `json:"quoteAssetPrecision"`
+	BaseCommissionPrecision         int        `json:"baseCommissionPrecision"`
+	QuoteCommissionPrecision        int        `json:"quoteCommissionPrecision"`
+	OrderTypes                      []string   `json:"orderTypes"`
+	IcebergAllowed                  bool       `json:"icebergAllowed"`
+	OcoAllowed                      bool       `json:"ocoAllowed"`
+	OtoAllowed                      bool       `json:"otoAllowed"`
+	QuoteOrderQtyMarketAllowed      bool       `json:"quoteOrderQtyMarketAllowed"`
+	AllowTrailingStop               bool       `json:"allowTrailingStop"`
+	CancelReplaceAllowed            bool       `json:"cancelReplaceAllowed"`
+	AllowAmend                      bool       `json:"allowAmend"`
+	IsSpotTradingAllowed            bool       `json:"isSpotTradingAllowed"`
+	IsMarginTradingAllowed          bool       `json:"isMarginTradingAllowed"`
+	Filters                         Filters    `json:"filters"`
+	Permissions                     []string   `json:"permissions"`
+	PermissionSets                  [][]string `json:"permissionSets"`
+	DefaultSelfTradePreventionMode  string     `json:"defaultSelfTradePreventionMode"`
+	AllowedSelfTradePreventionModes []string   `json:"allowedSelfTradePreventionModes"`
+}
+
+// WsExchangeInfoResultData 交易所信息查询响应数据
+type WsExchangeInfoResultData struct {
+	Timezone        string                      `json:"timezone"`
+	ServerTime      int64                       `json:"serverTime"`
+	RateLimits      []*WsAPIRateLimit           `json:"rateLimits"`
+	ExchangeFilters Filters                     `json:"exchangeFilters"`
+	Symbols         []*WsExchangeInfoSymbolData `json:"symbols"`
+}
 
 // FilterType 定义过滤器类型
 type FilterType string
@@ -32,8 +92,6 @@ const (
 // Filter 接口定义所有过滤器必须实现的方法
 type Filter interface {
 	GetFilterType() FilterType
-	json.Marshaler
-	json.Unmarshaler
 }
 
 // BaseFilter 所有过滤器的基础结构
@@ -55,7 +113,7 @@ type PriceFilter struct {
 
 func (f *PriceFilter) MarshalJSON() ([]byte, error) {
 	type Alias PriceFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -71,7 +129,7 @@ func (f *PriceFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != PRICE_FILTER {
@@ -92,7 +150,7 @@ type PercentPriceBySideFilter struct {
 
 func (f *PercentPriceBySideFilter) MarshalJSON() ([]byte, error) {
 	type Alias PercentPriceBySideFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -108,7 +166,7 @@ func (f *PercentPriceBySideFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != PERCENT_PRICE_BY_SIDE {
@@ -127,7 +185,7 @@ type LotSizeFilter struct {
 
 func (f *LotSizeFilter) MarshalJSON() ([]byte, error) {
 	type Alias LotSizeFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -143,7 +201,7 @@ func (f *LotSizeFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != LOT_SIZE {
@@ -162,7 +220,7 @@ type MinNotionalFilter struct {
 
 func (f *MinNotionalFilter) MarshalJSON() ([]byte, error) {
 	type Alias MinNotionalFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -178,7 +236,7 @@ func (f *MinNotionalFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != MIN_NOTIONAL {
@@ -197,7 +255,7 @@ type MarketLotSizeFilter struct {
 
 func (f *MarketLotSizeFilter) MarshalJSON() ([]byte, error) {
 	type Alias MarketLotSizeFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -213,7 +271,7 @@ func (f *MarketLotSizeFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != MARKET_LOT_SIZE {
@@ -230,7 +288,7 @@ type MaxNumOrdersFilter struct {
 
 func (f *MaxNumOrdersFilter) MarshalJSON() ([]byte, error) {
 	type Alias MaxNumOrdersFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -246,7 +304,7 @@ func (f *MaxNumOrdersFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != MAX_NUM_ORDERS {
@@ -263,7 +321,7 @@ type MaxNumAlgoOrdersFilter struct {
 
 func (f *MaxNumAlgoOrdersFilter) MarshalJSON() ([]byte, error) {
 	type Alias MaxNumAlgoOrdersFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -279,7 +337,7 @@ func (f *MaxNumAlgoOrdersFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != MAX_NUM_ALGO_ORDERS {
@@ -298,7 +356,7 @@ type PercentPriceFilter struct {
 
 func (f *PercentPriceFilter) MarshalJSON() ([]byte, error) {
 	type Alias PercentPriceFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -314,7 +372,7 @@ func (f *PercentPriceFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != PERCENT_PRICE {
@@ -331,7 +389,7 @@ type IcebergPartsFilter struct {
 
 func (f *IcebergPartsFilter) MarshalJSON() ([]byte, error) {
 	type Alias IcebergPartsFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -347,7 +405,7 @@ func (f *IcebergPartsFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != ICEBERG_PARTS {
@@ -364,7 +422,7 @@ type MaxNumIcebergOrdersFilter struct {
 
 func (f *MaxNumIcebergOrdersFilter) MarshalJSON() ([]byte, error) {
 	type Alias MaxNumIcebergOrdersFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -380,7 +438,7 @@ func (f *MaxNumIcebergOrdersFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != MAX_NUM_ICEBERG_ORDERS {
@@ -397,7 +455,7 @@ type MaxPositionRiskFilter struct {
 
 func (f *MaxPositionRiskFilter) MarshalJSON() ([]byte, error) {
 	type Alias MaxPositionRiskFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -413,7 +471,7 @@ func (f *MaxPositionRiskFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != MAX_POSITION {
@@ -433,7 +491,7 @@ type TrailingDeltaFilter struct {
 
 func (f *TrailingDeltaFilter) MarshalJSON() ([]byte, error) {
 	type Alias TrailingDeltaFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -449,7 +507,7 @@ func (f *TrailingDeltaFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != TRAILING_DELTA {
@@ -471,7 +529,7 @@ type NotionalFilter struct {
 
 func (f *NotionalFilter) MarshalJSON() ([]byte, error) {
 	type Alias NotionalFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -487,7 +545,7 @@ func (f *NotionalFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != NOTIONAL {
@@ -504,7 +562,7 @@ type MaxOpenOrdersFilter struct {
 
 func (f *MaxOpenOrdersFilter) MarshalJSON() ([]byte, error) {
 	type Alias MaxOpenOrdersFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -520,7 +578,7 @@ func (f *MaxOpenOrdersFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != MAX_OPEN_ORDERS {
@@ -537,7 +595,7 @@ type MaxOpenAlgoOrdersFilter struct {
 
 func (f *MaxOpenAlgoOrdersFilter) MarshalJSON() ([]byte, error) {
 	type Alias MaxOpenAlgoOrdersFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -553,7 +611,7 @@ func (f *MaxOpenAlgoOrdersFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != MAX_OPEN_ALGO_ORDERS {
@@ -570,7 +628,7 @@ type ExchangeMaxNumOrdersFilter struct {
 
 func (f *ExchangeMaxNumOrdersFilter) MarshalJSON() ([]byte, error) {
 	type Alias ExchangeMaxNumOrdersFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -586,7 +644,7 @@ func (f *ExchangeMaxNumOrdersFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != EXCHANGE_MAX_NUM_ORDERS {
@@ -603,7 +661,7 @@ type ExchangeMaxAlgoOrdersFilter struct {
 
 func (f *ExchangeMaxAlgoOrdersFilter) MarshalJSON() ([]byte, error) {
 	type Alias ExchangeMaxAlgoOrdersFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -619,7 +677,7 @@ func (f *ExchangeMaxAlgoOrdersFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != EXCHANGE_MAX_ALGO_ORDERS {
@@ -636,7 +694,7 @@ type ExchangeMaxNumIcebergOrdersFilter struct {
 
 func (f *ExchangeMaxNumIcebergOrdersFilter) MarshalJSON() ([]byte, error) {
 	type Alias ExchangeMaxNumIcebergOrdersFilter
-	return json.Marshal(&struct {
+	return json.JSON().Marshal(&struct {
 		*Alias
 		FilterType FilterType `json:"filterType"`
 	}{
@@ -652,7 +710,7 @@ func (f *ExchangeMaxNumIcebergOrdersFilter) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(f),
 	}
-	if err := json.Unmarshal(data, aux); err != nil {
+	if err := json.JSON().Unmarshal(data, aux); err != nil {
 		return err
 	}
 	if f.FilterType != EXCHANGE_MAX_NUM_ICEBERG_ORDERS {
@@ -672,17 +730,17 @@ func (f *GenericFilter) MarshalJSON() ([]byte, error) {
 		f.RawData = make(map[string]interface{})
 	}
 	f.RawData["filterType"] = f.FilterType
-	return json.Marshal(f.RawData)
+	return json.JSON().Marshal(f.RawData)
 }
 
 func (f *GenericFilter) UnmarshalJSON(data []byte) error {
 	// 首先解析基础过滤器类型
-	if err := json.Unmarshal(data, &f.BaseFilter); err != nil {
+	if err := json.JSON().Unmarshal(data, &f.BaseFilter); err != nil {
 		return err
 	}
 
 	// 解析原始数据到 map
-	if err := json.Unmarshal(data, &f.RawData); err != nil {
+	if err := json.JSON().Unmarshal(data, &f.RawData); err != nil {
 		return err
 	}
 
@@ -692,7 +750,7 @@ func (f *GenericFilter) UnmarshalJSON(data []byte) error {
 // ParseFilter 解析过滤器 JSON 数据
 func ParseFilter(data []byte) (Filter, error) {
 	var base BaseFilter
-	if err := json.Unmarshal(data, &base); err != nil {
+	if err := json.JSON().Unmarshal(data, &base); err != nil {
 		return nil, err
 	}
 
@@ -737,13 +795,13 @@ func ParseFilter(data []byte) (Filter, error) {
 	default:
 		// 使用通用过滤器处理未知类型
 		genericFilter := &GenericFilter{}
-		if err := json.Unmarshal(data, genericFilter); err != nil {
+		if err := json.JSON().Unmarshal(data, genericFilter); err != nil {
 			return nil, fmt.Errorf("failed to parse unknown filter type %s: %v", base.FilterType, err)
 		}
 		return genericFilter, nil
 	}
 
-	if err := json.Unmarshal(data, filter); err != nil {
+	if err := json.JSON().Unmarshal(data, filter); err != nil {
 		return nil, err
 	}
 
@@ -757,7 +815,7 @@ type Filters []Filter
 func (f *Filters) UnmarshalJSON(data []byte) error {
 	// data 是包含 Filter JSON 对象的数组
 	var rawFilters []json.RawMessage
-	if err := json.Unmarshal(data, &rawFilters); err != nil {
+	if err := json.JSON().Unmarshal(data, &rawFilters); err != nil {
 		return err
 	}
 
@@ -777,5 +835,5 @@ func (f *Filters) UnmarshalJSON(data []byte) error {
 
 // MarshalJSON 实现 Filters 类型的 MarshalJSON 方法
 func (f Filters) MarshalJSON() ([]byte, error) {
-	return json.Marshal([]Filter(f))
+	return json.JSON().Marshal([]Filter(f))
 }

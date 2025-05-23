@@ -44,4 +44,4 @@ type WsAPIAuthResultData struct {
 	ReturnRateLimits bool   `json:"returnRateLimits"`
 	ServerTime       int64  `json:"serverTime"`
 	UserDataStream   bool   `json:"userDataStream"`
-}
+} 

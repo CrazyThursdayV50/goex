@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/CrazyThursdayV50/goex/binance"
-	"github.com/CrazyThursdayV50/goex/binance/models"
 	"github.com/CrazyThursdayV50/goex/binance/variables"
+	"github.com/CrazyThursdayV50/goex/binance/websocket-streams/models"
 	"github.com/CrazyThursdayV50/pkgo/builtin/collector"
 	"github.com/CrazyThursdayV50/pkgo/json"
 	"github.com/CrazyThursdayV50/pkgo/log"
@@ -18,12 +17,12 @@ type Streamer interface {
 	StreamName() string
 }
 
-func newStream(streamer Streamer, ctx context.Context, logger log.Logger, handler client.MessageHandler) *binance.Client {
-	return binance.NewClient(ctx, logger, fmt.Sprintf(variables.StreamURL(), streamer.StreamName()), handler)
+func newStream(streamer Streamer, ctx context.Context, logger log.Logger, handler client.MessageHandler) *Client {
+	return NewClient(ctx, logger, fmt.Sprintf(variables.StreamURL(), streamer.StreamName()), handler)
 }
 
-func newCombinedStream(ctx context.Context, logger log.Logger, streamers []Streamer, handler client.MessageHandler) *binance.Client {
-	return binance.NewClient(ctx, logger, fmt.Sprintf(variables.CombinedStreamURL(), strings.Join(collector.Slice(streamers, func(_ int, streamer Streamer) (bool, string) { return true, streamer.StreamName() }), "/")), handler)
+func newCombinedStream(ctx context.Context, logger log.Logger, streamers []Streamer, handler client.MessageHandler) *Client {
+	return NewClient(ctx, logger, fmt.Sprintf(variables.CombinedStreamURL(), strings.Join(collector.Slice(streamers, func(_ int, streamer Streamer) (bool, string) { return true, streamer.StreamName() }), "/")), handler)
 }
 
 type partialBookDepthStreamer struct {
@@ -45,7 +44,7 @@ func (s partialBookDepth100msStreamer) StreamName() string {
 	return fmt.Sprintf(variables.PARTIAL_BOOK_DEPTH_100ms, strings.ToLower(s.symbol), s.level)
 }
 
-func PartialBookDepth5Stream(ctx context.Context, logger log.Logger, symbol string, handler WsPartialDepthHandler) *binance.Client {
+func PartialBookDepth5Stream(ctx context.Context, logger log.Logger, symbol string, handler WsPartialDepthHandler) *Client {
 	client := newStream(
 		partialBookDepth100msStreamer{symbol: symbol, level: 5},
 		ctx,
@@ -66,7 +65,7 @@ func PartialBookDepth5Stream(ctx context.Context, logger log.Logger, symbol stri
 	return client
 }
 
-func PartialBookDepth5CombinedStream(ctx context.Context, logger log.Logger, symbols []string, handler WsPartialDepthCombinedHandler) *binance.Client {
+func PartialBookDepth5CombinedStream(ctx context.Context, logger log.Logger, symbols []string, handler WsPartialDepthCombinedHandler) *Client {
 	client := newCombinedStream(
 		ctx,
 		logger,

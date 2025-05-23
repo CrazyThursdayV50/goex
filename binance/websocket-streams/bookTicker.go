@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/CrazyThursdayV50/goex/binance"
-	"github.com/CrazyThursdayV50/goex/binance/models"
 	"github.com/CrazyThursdayV50/goex/binance/variables"
+	"github.com/CrazyThursdayV50/goex/binance/websocket-streams/models"
 	"github.com/CrazyThursdayV50/pkgo/builtin/collector"
 	"github.com/CrazyThursdayV50/pkgo/json"
 	"github.com/CrazyThursdayV50/pkgo/log"
@@ -22,7 +21,7 @@ func (s bookTickerStreamer) StreamName() string {
 	return fmt.Sprintf(variables.INDIVIDUAL_BOOK_TICKER, strings.ToLower(s.symbol))
 }
 
-func IndividualSymbolBookTickerStream(ctx context.Context, logger log.Logger, symbols []string, handler WsIndividualSymbolBookTickerHandler) *binance.Client {
+func IndividualSymbolBookTickerStream(ctx context.Context, logger log.Logger, symbols []string, handler WsIndividualSymbolBookTickerHandler) *Client {
 	client := newCombinedStream(
 		ctx,
 		logger,

@@ -3,7 +3,7 @@ package websocketapi
 import (
 	"context"
 
-	"github.com/CrazyThursdayV50/goex/binance/models"
+	"github.com/CrazyThursdayV50/goex/binance/websocket-api/models"
 	"github.com/CrazyThursdayV50/pkgo/builtin"
 	"github.com/CrazyThursdayV50/pkgo/json"
 	"github.com/CrazyThursdayV50/pkgo/log"

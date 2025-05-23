@@ -1,5 +1,6 @@
 package models
 
+// WsAccountStatusParamsData 账户状态查询请求参数
 type WsAccountStatusParamsData struct {
 	OmitZeroBalances bool `json:"omitZeroBalances"`
 	Sign
@@ -22,6 +23,7 @@ func NewWsAccountStatusParams() *WsAccountStatusParams {
 	}
 }
 
+// WsAccountStatusResultData 账户状态查询响应数据
 type WsAccountStatusResultData struct {
 	MakerCommission            int             `json:"makerCommission"`
 	TakerCommission            int             `json:"takerCommission"`
@@ -41,6 +43,7 @@ type WsAccountStatusResultData struct {
 	UID                        int64           `json:"uid"`
 }
 
+// CommissionRates 手续费率
 type CommissionRates struct {
 	Maker  string `json:"maker"`
 	Taker  string `json:"taker"`
@@ -48,8 +51,9 @@ type CommissionRates struct {
 	Seller string `json:"seller"`
 }
 
+// Balance 账户余额
 type Balance struct {
 	Asset  string `json:"asset"`
 	Free   string `json:"free"`
 	Locked string `json:"locked"`
-}
+} 

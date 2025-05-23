@@ -144,4 +144,4 @@ func NewWsTestOrderParams() *WsTestOrderParams {
 	return &WsTestOrderParams{
 		Method: "order.test",
 	}
-}
+} 
