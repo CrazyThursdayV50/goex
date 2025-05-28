@@ -151,7 +151,10 @@ func New(ctx context.Context, logger log.Logger, apiKey, secretKey string) *API 
 		).Run()
 	}))
 
-	c.Run()
+	err := c.Run()
+	if err != nil {
+		panic(err)
+	}
 
 	api := &API{
 		client:        c,
