@@ -21,6 +21,7 @@ func WsAPIReadmessageTimeout() time.Duration { return wsapiReadMessageTimeout }
 
 // 本篇所列出的所有wss接口的baseurl为: wss://stream.binance.com:9443 或者 wss://stream.binance.com:443
 const WS_STREAM_BASE_URL = "wss://stream.binance.com:443"
+const WS_STREAM_TESAT_BASE_URL = "wss://stream.testnet.binance.vision/ws"
 
 /*
 本篇所列出的 wss 接口的 base URL：wss://ws-api.binance.com:443/ws-api/v3
@@ -31,26 +32,28 @@ const WS_API_BASE_URL = "wss://ws-api.binance.com:443/ws-api/v3"
 const WS_API_TEST_BASE_URL = "wss://ws-api.testnet.binance.vision/ws-api/v3"
 
 // const BASE_URL = "wss://stream.binance.com:9443"
-const STREAM_URL = WS_STREAM_BASE_URL + "/ws/%s"
-const COMBINED_STREAM_URL = WS_STREAM_BASE_URL + "/stream?streams=%s"
+const STREAM_URL = "/ws/%s"
+const COMBINED_STREAM_URL = "/stream?streams=%s"
 
 // Stream Names: <symbol>@depth<levels> OR <symbol>@depth<levels>@100ms
 const PARTIAL_BOOK_DEPTH = "%s@depth%d"
 const PARTIAL_BOOK_DEPTH_100ms = "%s@depth%d@100ms"
 const INDIVIDUAL_BOOK_TICKER = "%s@bookTicker"
 
-func StreamURL() string {
+func streamBaseUrl() string {
 	if istest {
-		return STREAM_URL
+		return WS_STREAM_TESAT_BASE_URL
 	}
-	return STREAM_URL
+
+	return WS_STREAM_BASE_URL
+}
+
+func StreamURL() string {
+	return streamBaseUrl() + STREAM_URL
 }
 
 func CombinedStreamURL() string {
-	if istest {
-		return COMBINED_STREAM_URL
-	}
-	return COMBINED_STREAM_URL
+	return streamBaseUrl() + COMBINED_STREAM_URL
 }
 
 func WsAPIURL() string {
@@ -58,9 +61,4 @@ func WsAPIURL() string {
 		return WS_API_TEST_BASE_URL
 	}
 	return WS_API_BASE_URL
-}
-
-// GetWsAPIEndpoint 返回 WebSocket API 端点
-func GetWsAPIEndpoint() string {
-	return WsAPIURL()
 }
