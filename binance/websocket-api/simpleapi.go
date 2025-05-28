@@ -9,7 +9,8 @@ import (
 
 func (api *API) MarketOrder(ctx context.Context, symbol, marketQuantity string, isBuy bool) (builtin.UnWrapper[*models.WsOrderResultData], error) {
 	order := models.WsOrderParamsData{
-		Type: models.MARKET,
+		Type:   models.MARKET,
+		Symbol: symbol,
 	}
 
 	switch isBuy {
