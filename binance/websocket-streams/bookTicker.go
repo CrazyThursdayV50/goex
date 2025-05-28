@@ -40,6 +40,9 @@ func IndividualSymbolBookTickerStream(ctx context.Context, logger log.Logger, sy
 			return client.BinaryMessage, nil
 		})
 
-	client.Run()
+	err := client.Run()
+	if err != nil {
+		panic(err)
+	}
 	return client
 }

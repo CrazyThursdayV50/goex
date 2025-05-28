@@ -61,7 +61,10 @@ func PartialBookDepth5Stream(ctx context.Context, logger log.Logger, symbol stri
 			return client.BinaryMessage, nil
 		})
 
-	client.Run()
+	err := client.Run()
+	if err != nil {
+		panic(err)
+	}
 	return client
 }
 
@@ -85,6 +88,10 @@ func PartialBookDepth5CombinedStream(ctx context.Context, logger log.Logger, sym
 			return client.BinaryMessage, nil
 		})
 
-	client.Run()
+	err := client.Run()
+	if err != nil {
+		panic(err)
+	}
+
 	return client
 }

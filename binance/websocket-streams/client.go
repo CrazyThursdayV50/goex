@@ -12,8 +12,8 @@ type Client struct {
 	WsClient *client.Client
 }
 
-func (c *Client) Stop() { c.WsClient.Stop() }
-func (c *Client) Run()  { c.WsClient.Run() }
+func (c *Client) Stop()      { c.WsClient.Stop() }
+func (c *Client) Run() error { return c.WsClient.Run() }
 
 func NewClient(ctx context.Context, logger log.Logger, url string, handler client.MessageHandler) *Client {
 	logger.Debugf("ws connect to %s", url)
