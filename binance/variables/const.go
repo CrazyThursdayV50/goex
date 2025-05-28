@@ -3,8 +3,11 @@ package variables
 import "time"
 
 var istest = false
+var proxy = ""
 
-func SetIsTest() { istest = true }
+func SetIsTest()          { istest = true }
+func SetProxy(url string) { proxy = url }
+func GetProxy() string    { return proxy }
 
 var wsapiReadMessageTimeout = time.Second * 10
 

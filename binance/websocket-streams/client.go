@@ -19,6 +19,7 @@ func NewClient(ctx context.Context, logger log.Logger, url string, handler clien
 	logger.Debugf("ws connect to %s", url)
 	wsclient := client.New(
 		client.WithContext(ctx),
+		client.WithProxy(variables.GetProxy()),
 		client.WithLogger(logger),
 		client.WithURL(url),
 		client.WithDefaultCompress(true),
