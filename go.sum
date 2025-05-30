@@ -1,11 +1,5 @@
-github.com/CrazyThursdayV50/pkgo v0.1.9-0.20250518044844-01ca6d12574e h1:2tMk2lS3PO1fH88ABDC9xSa/Z0nJZ+oaD98PoF2rz+8=
-github.com/CrazyThursdayV50/pkgo v0.1.9-0.20250518044844-01ca6d12574e/go.mod h1:3t7LF7QovRP2uzSgq4ct+Dwo5rtnbXvgV4fP5KLRi1c=
-github.com/CrazyThursdayV50/pkgo v0.1.9-0.20250518045739-e571be8346ee h1:Lq1DYSf5+KeTWdWdSLNo/i9DiUxJMuMIERJRWhmQXlU=
-github.com/CrazyThursdayV50/pkgo v0.1.9-0.20250518045739-e571be8346ee/go.mod h1:3t7LF7QovRP2uzSgq4ct+Dwo5rtnbXvgV4fP5KLRi1c=
-github.com/CrazyThursdayV50/pkgo v0.1.9-0.20250528060336-181a5201a939 h1:ZlQ7JU0M02u/5Yb4uAj8tCcxZ6XgG9VwfyZX7OcI3E0=
-github.com/CrazyThursdayV50/pkgo v0.1.9-0.20250528060336-181a5201a939/go.mod h1:3t7LF7QovRP2uzSgq4ct+Dwo5rtnbXvgV4fP5KLRi1c=
-github.com/CrazyThursdayV50/pkgo v0.1.9-0.20250528061349-c6e59017f192 h1:o63/rN0H8XyEKTHc05B50proh6D2tUuzBD4a0Mf1asA=
-github.com/CrazyThursdayV50/pkgo v0.1.9-0.20250528061349-c6e59017f192/go.mod h1:3t7LF7QovRP2uzSgq4ct+Dwo5rtnbXvgV4fP5KLRi1c=
+github.com/CrazyThursdayV50/pkgo v0.2.2 h1:YOstiL8SzvKZQ+gpNwtQFbyK+fqEbzJgTwqn6tmzH+8=
+github.com/CrazyThursdayV50/pkgo v0.2.2/go.mod h1:nC7UgjMJ+I7Qnuv0J4BQ4fw6O7ebgEhrFkIPKqG06Bo=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

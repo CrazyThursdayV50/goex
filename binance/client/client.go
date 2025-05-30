@@ -1,4 +1,4 @@
-package websocketstreams
+package client
 
 import (
 	"context"
@@ -9,28 +9,30 @@ import (
 )
 
 type Client struct {
+	logger   log.Logger
 	WsClient *client.Client
 }
 
-func (c *Client) Stop()      { c.WsClient.Stop() }
-func (c *Client) Run() error { return c.WsClient.Run() }
+func (c *Client) Stop()                         { c.WsClient.Stop() }
+func (c *Client) Run(ctx context.Context) error { return c.WsClient.Run(ctx) }
 
-func NewClient(ctx context.Context, logger log.Logger, url string, handler client.MessageHandler) *Client {
-	logger.Debugf("ws connect to %s", url)
+func NewClient(logger log.Logger, url string, handler client.MessageHandler, pingLoop client.PingLoop) *Client {
+	logger.Debugf("websocket connecting to %s ...", url)
 	wsclient := client.New(
-		client.WithContext(ctx),
 		client.WithProxy(variables.GetProxy()),
 		client.WithLogger(logger),
 		client.WithURL(url),
 		client.WithDefaultCompress(true),
 		client.WithPingHandler(variables.WriteControlTimeout(), nil),
 		client.WithPongHandler(variables.WriteControlTimeout(), func(string) error {
-			logger.Debugf("PONG recv")
+			logger.Debugf("Recv: PONG")
 			return nil
 		}),
+		client.WithPingLoop(pingLoop),
 		client.WithMessageHandler(func(ctx context.Context, l log.Logger, i int, b []byte, f func(error)) (int, []byte) {
 			switch i {
 			case client.TextMessage:
+				logger.Debugf("Recv: TEXT, %s", b)
 				return handler(ctx, l, i, b, f)
 
 			default:
@@ -39,7 +41,7 @@ func NewClient(ctx context.Context, logger log.Logger, url string, handler clien
 		}),
 	)
 
-	return &Client{WsClient: wsclient}
+	return &Client{logger: logger, WsClient: wsclient}
 }
 
 func (c *Client) Ping(data []byte) error {
@@ -51,5 +53,6 @@ func (c *Client) Pong(data []byte) error {
 }
 
 func (c *Client) Send(data []byte) error {
+	c.logger.Debugf("Send: TEXT, %s", data)
 	return c.WsClient.Send(data)
 }

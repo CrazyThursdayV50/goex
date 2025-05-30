@@ -1,4 +1,4 @@
-package websocketapi
+package api
 
 import (
 	"context"
@@ -9,6 +9,8 @@ import (
 	"github.com/CrazyThursdayV50/pkgo/log"
 	"github.com/CrazyThursdayV50/pkgo/websocket/client"
 )
+
+var PingMessage = client.PingMessage
 
 func handler(responseMap builtin.MapAPI[string, *models.WsAPIResult]) func(context.Context, log.Logger, int, []byte, func(error)) (int, []byte) {
 

@@ -1,12 +1,23 @@
 package models
 
 import (
+	"context"
+	"encoding"
 	"errors"
 	"fmt"
 	"time"
 
+	"github.com/CrazyThursdayV50/pkgo/builtin"
 	"github.com/CrazyThursdayV50/pkgo/json"
 )
+
+type ResultData interface {
+	UnmarlshalJSON([]byte) error
+}
+
+type WsRequest interface {
+	Do(ctx context.Context) (builtin.UnWrapper[ResultData], error)
+}
 
 // WsAPIParams WebSocket API 请求参数基础结构
 type WsAPIParams[T any] struct {
@@ -27,20 +38,54 @@ func (p *WsAPIParams[T]) BinaryUnmarshal(data []byte) error {
 	return json.JSON().Unmarshal(data, p)
 }
 
+func (p *WsAPIParams[T]) SetId(id string) { p.Id = id }
+
 // WsAPIResult WebSocket API 响应结果基础结构
 type WsAPIResult struct {
-	Id         string            `json:"id"`
-	Status     int               `json:"status"`
-	Result     json.RawMessage   `json:"result"`
-	RateLimits []*WsAPIRateLimit `json:"rateLimits"`
+	Id         string                     `json:"id"`
+	Status     int                        `json:"status"`
+	Result     json.RawMessage            `json:"result"`
+	RateLimits []*RateLimit               `json:"rateLimits"`
+	Err        *WsAPIResultError          `json:"error,omitempty"`
+	InnerData  encoding.BinaryUnmarshaler `json:"-"`
+}
+
+/*
+	"error": {
+	  "code": -2010,
+	  "msg": "Account has insufficient balance for requested action."
+	},
+*/
+
+type WsAPIResultError struct {
+	Code int64  `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+func (e *WsAPIResultError) String() string {
+	if e == nil {
+		return "nil"
+	}
+
+	return fmt.Sprintf("[%d]%s", e.Code, e.Msg)
 }
 
 func (r *WsAPIResult) String() string {
 	return fmt.Sprintf("[%s] - %d - %s", r.Id, r.Status, r.Result)
 }
 
-// WsAPIRateLimit API速率限制信息
-type WsAPIRateLimit struct {
+func (r *WsAPIResult) IsOk() bool { return r.Status == 200 }
+
+func (r *WsAPIResult) Error() string {
+	return fmt.Sprintf("status: %d, error: %s", r.Status, r.Err)
+}
+
+func (r *WsAPIResult) UnmarshalData() error {
+	return r.InnerData.UnmarshalBinary(r.Result)
+}
+
+// RateLimit API速率限制信息
+type RateLimit struct {
 	RateLimitType string `json:"rateLimitType"`
 	Interval      string `json:"interval"`
 	IntervalNum   int    `json:"intervalNum"`
@@ -72,4 +117,4 @@ func (p *Sign) Map() map[string]string {
 		"apiKey":    p.ApiKey,
 		"timestamp": fmt.Sprintf("%d", p.Timestamp),
 	}
-} 
+}

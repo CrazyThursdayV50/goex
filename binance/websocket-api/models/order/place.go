@@ -1,41 +1,14 @@
-package models
+// Package order
+package order
 
 import (
 	"fmt"
+
+	"github.com/CrazyThursdayV50/goex/binance/websocket-api/models"
 )
 
-// OrderSide 订单方向
-type OrderSide string
-
-const (
-	BUY  OrderSide = "BUY"
-	SELL OrderSide = "SELL"
-)
-
-// OrderType 订单类型
-type OrderType string
-
-const (
-	LIMIT             OrderType = "LIMIT"
-	MARKET            OrderType = "MARKET"
-	STOP_LOSS         OrderType = "STOP_LOSS"
-	STOP_LOSS_LIMIT   OrderType = "STOP_LOSS_LIMIT"
-	TAKE_PROFIT       OrderType = "TAKE_PROFIT"
-	TAKE_PROFIT_LIMIT OrderType = "TAKE_PROFIT_LIMIT"
-	LIMIT_MAKER       OrderType = "LIMIT_MAKER"
-)
-
-// TimeInForce 订单有效期
-type TimeInForce string
-
-const (
-	GTC TimeInForce = "GTC" // Good Till Cancel
-	IOC TimeInForce = "IOC" // Immediate or Cancel
-	FOK TimeInForce = "FOK" // Fill or Kill
-)
-
-// WsOrderParamsData WebSocket API 下单请求参数
-type WsOrderParamsData struct {
+// ParamsData WebSocket API 下单请求参数
+type ParamsData struct {
 	Symbol                  string       `json:"symbol"`                            // 交易对
 	Side                    OrderSide    `json:"side"`                              // 订单方向
 	Type                    OrderType    `json:"type"`                              // 订单类型
@@ -51,11 +24,11 @@ type WsOrderParamsData struct {
 	StrategyId              *int64       `json:"strategyId,omitempty"`              // 策略ID
 	StrategyType            *int64       `json:"strategyType,omitempty"`            // 策略类型
 	TrailingDelta           *int64       `json:"trailingDelta,omitempty"`           // 追踪止损点数
-	Sign
+	models.Sign
 }
 
 // Map 返回用于签名的参数map
-func (p *WsOrderParamsData) Map() map[string]string {
+func (p *ParamsData) Map() map[string]string {
 	params := p.Sign.Map()
 	params["symbol"] = p.Symbol
 	params["side"] = string(p.Side)
@@ -102,55 +75,54 @@ func (p *WsOrderParamsData) Map() map[string]string {
 	return params
 }
 
-// WsOrderParams WebSocket API 下单请求
-type WsOrderParams = WsAPIParams[*WsOrderParamsData]
+// Params WebSocket API 下单请求
+type Params = models.WsAPIParams[*ParamsData]
 
-func NewWsOrderParams() *WsOrderParams {
-	return &WsOrderParams{
+func NewParams() *Params {
+	return &Params{
 		Method: "order.place",
 	}
 }
 
-// WsOrderResultData WebSocket API 下单响应数据
-type WsOrderResultData struct {
+func NewParamsTest() *Params {
+	return &Params{
+		Method: "order.test",
+	}
+}
+
+// ResultData WebSocket API 下单响应数据
+type ResultData struct {
 	Symbol                  string                  `json:"symbol"`
-	OrderId                 int64                   `json:"orderId"`
-	OrderListId             int64                   `json:"orderListId"`
-	ClientOrderId           string                  `json:"clientOrderId"`
+	OrderID                 int64                   `json:"orderId"`
+	OrderListID             int64                   `json:"orderListId"`
+	ClientOrderID           string                  `json:"clientOrderId"`
 	TransactTime            int64                   `json:"transactTime"`
 	Price                   string                  `json:"price"`
 	OrigQty                 string                  `json:"origQty"`
 	ExecutedQty             string                  `json:"executedQty"`
+	OrigQuoteOrderQty       string                  `json:"origQuoteOrderQty"`
 	CummulativeQuoteQty     string                  `json:"cummulativeQuoteQty"`
-	Status                  string                  `json:"status"`
-	TimeInForce             string                  `json:"timeInForce"`
-	Type                    string                  `json:"type"`
-	Side                    string                  `json:"side"`
+	Status                  OrderStatus             `json:"status"`
+	TimeInForce             TimeInForce             `json:"timeInForce"`
+	Type                    OrderType               `json:"type"`
+	Side                    OrderSide               `json:"side"`
 	WorkingTime             int64                   `json:"workingTime"`
-	SelfTradePreventionMode string                  `json:"selfTradePreventionMode"`
-	IcebergQty              string                  `json:"icebergQty,omitempty"`
-	StopPrice               string                  `json:"stopPrice,omitempty"`
-	StrategyId              int64                   `json:"strategyId,omitempty"`
-	StrategyType            int64                   `json:"strategyType,omitempty"`
-	TrailingDelta           int64                   `json:"trailingDelta,omitempty"`
-	PreventedMatchId        int64                   `json:"preventedMatchId,omitempty"`
-	PreventedQuantity       string                  `json:"preventedQuantity,omitempty"`
-	Fills                   []WsOrderResultDataFill `json:"fills,omitempty"`
-}
+	SelfTradePreventionMode SelfTradePreventionMode `json:"selfTradePreventionMode"`
+	Fills                   []*Trade                `json:"fills,omitempty"`
 
-type WsOrderResultDataFill struct {
-	Price           string `json:"price"`
-	Quantity        string `json:"qty"`
-	Commission      string `json:"commission"`
-	CommissionAsset string `json:"commissionAsset"`
-	TradeId         int64  `json:"tradeId"`
-}
-
-// WsTestOrderParams WebSocket API 测试下单请求
-type WsTestOrderParams = WsAPIParams[*WsOrderParamsData]
-
-func NewWsTestOrderParams() *WsTestOrderParams {
-	return &WsTestOrderParams{
-		Method: "order.test",
-	}
+	// 特殊情况下才有的字段
+	IcebergQty        string        `json:"icebergQty,omitempty"`
+	PreventedMatchID  int64         `json:"preventedMatchId,omitempty"`
+	PreventedQuantity string        `json:"preventedQuantity,omitempty"`
+	StopPrice         string        `json:"stopPrice,omitempty"`
+	StrategyID        int64         `json:"strategyId,omitempty"`
+	StrategyType      int64         `json:"strategyType,omitempty"`
+	TrailingDelta     int64         `json:"trailingDelta,omitempty"`
+	TrailingTime      int64         `json:"trailingTime,omitempty"`
+	UsedSor           bool          `json:"usedSor,omitempty"`
+	WorkingFloor      string        `json:"workingFloor,omitempty"`
+	PegPriceType      PegPriceType  `json:"pegPriceType,omitempty"`
+	PegOffsetType     PegOffsetType `json:"pegOffsetType,omitempty"`
+	PegOffsetValue    int64         `json:"pegOffsetValue,omitempty"`
+	PeggedPrice       string        `json:"peggedPrice,omitempty"`
 }

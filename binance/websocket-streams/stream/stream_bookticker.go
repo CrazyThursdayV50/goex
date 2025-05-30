@@ -1,16 +1,16 @@
-package websocketstreams
+package stream
 
 import (
 	"context"
 	"fmt"
 	"strings"
 
+	"github.com/CrazyThursdayV50/goex/binance/client"
 	"github.com/CrazyThursdayV50/goex/binance/variables"
 	"github.com/CrazyThursdayV50/goex/binance/websocket-streams/models"
 	"github.com/CrazyThursdayV50/pkgo/builtin/collector"
 	"github.com/CrazyThursdayV50/pkgo/json"
 	"github.com/CrazyThursdayV50/pkgo/log"
-	"github.com/CrazyThursdayV50/pkgo/websocket/client"
 )
 
 type bookTickerStreamer struct {
@@ -21,9 +21,9 @@ func (s bookTickerStreamer) StreamName() string {
 	return fmt.Sprintf(variables.INDIVIDUAL_BOOK_TICKER, strings.ToLower(s.symbol))
 }
 
-func IndividualSymbolBookTickerStream(ctx context.Context, logger log.Logger, symbols []string, handler WsIndividualSymbolBookTickerHandler) *Client {
+// 最佳买卖数据
+func IndividualSymbolBookTickerStream(logger log.Logger, symbols []string, handler WsIndividualSymbolBookTickerHandler) *client.Client {
 	client := newCombinedStream(
-		ctx,
 		logger,
 		collector.Slice(symbols, func(_ int, symbol string) (bool, Streamer) {
 			return true, bookTickerStreamer{symbol: symbol}
@@ -33,16 +33,17 @@ func IndividualSymbolBookTickerStream(ctx context.Context, logger log.Logger, sy
 			err := json.JSON().Unmarshal(b, &event)
 			if err != nil {
 				f(err)
-				return client.BinaryMessage, nil
+				return BinaryMessage, nil
 			}
 
 			handler(event.Data)
-			return client.BinaryMessage, nil
+			return BinaryMessage, nil
 		})
 
-	err := client.Run()
-	if err != nil {
-		panic(err)
-	}
 	return client
+}
+
+// IndividualSymbolBookTickerStream 创建个股最佳买卖价流
+func (ws *WebSocketStreams) IndividualSymbolBookTickerStream(logger log.Logger, symbols []string, handler WsIndividualSymbolBookTickerHandler) *client.Client {
+	return IndividualSymbolBookTickerStream(logger, symbols, handler)
 }

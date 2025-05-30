@@ -1,13 +1,14 @@
-package models
+package exchangeinfo
 
 import (
 	"fmt"
 
+	"github.com/CrazyThursdayV50/goex/binance/websocket-api/models"
 	"github.com/CrazyThursdayV50/pkgo/json"
 )
 
-// WsExchangeInfoParamsData 交易所信息查询请求参数
-type WsExchangeInfoParamsData struct {
+// ParamsData 交易所信息查询请求参数
+type ParamsData struct {
 	Symbol  string   `json:"symbol,omitempty"`
 	Symbols []string `json:"symbols,omitempty"`
 
@@ -20,16 +21,16 @@ type WsExchangeInfoParamsData struct {
 	SymbolStatus string `json:"symbolStatus,omitempty"`
 }
 
-type WsExchangeInfoParams = WsAPIParams[*WsExchangeInfoParamsData]
+type Params = models.WsAPIParams[*ParamsData]
 
-func NewWsExchangeInfoParams() *WsExchangeInfoParams {
-	return &WsExchangeInfoParams{
+func NewParams() *Params {
+	return &Params{
 		Method: "exchangeInfo",
 	}
 }
 
-// WsExchangeInfoSymbolData 交易对信息
-type WsExchangeInfoSymbolData struct {
+// SymbolData 交易对信息
+type SymbolData struct {
 	Symbol                          string     `json:"symbol"`
 	Status                          string     `json:"status"`
 	BaseAsset                       string     `json:"baseAsset"`
@@ -56,13 +57,13 @@ type WsExchangeInfoSymbolData struct {
 	AllowedSelfTradePreventionModes []string   `json:"allowedSelfTradePreventionModes"`
 }
 
-// WsExchangeInfoResultData 交易所信息查询响应数据
-type WsExchangeInfoResultData struct {
-	Timezone        string                      `json:"timezone"`
-	ServerTime      int64                       `json:"serverTime"`
-	RateLimits      []*RateLimit                `json:"rateLimits"`
-	ExchangeFilters Filters                     `json:"exchangeFilters"`
-	Symbols         []*WsExchangeInfoSymbolData `json:"symbols"`
+// ResultData 交易所信息查询响应数据
+type ResultData struct {
+	Timezone        string              `json:"timezone"`
+	ServerTime      int64               `json:"serverTime"`
+	RateLimits      []*models.RateLimit `json:"rateLimits"`
+	ExchangeFilters Filters             `json:"exchangeFilters"`
+	Symbols         []*SymbolData       `json:"symbols"`
 }
 
 // FilterType 定义过滤器类型
@@ -722,12 +723,12 @@ func (f *ExchangeMaxNumIcebergOrdersFilter) UnmarshalJSON(data []byte) error {
 // GenericFilter 通用过滤器，用于处理未知的过滤器类型
 type GenericFilter struct {
 	BaseFilter
-	RawData map[string]interface{} `json:"-"`
+	RawData map[string]any `json:"-"`
 }
 
 func (f *GenericFilter) MarshalJSON() ([]byte, error) {
 	if f.RawData == nil {
-		f.RawData = make(map[string]interface{})
+		f.RawData = make(map[string]any)
 	}
 	f.RawData["filterType"] = f.FilterType
 	return json.JSON().Marshal(f.RawData)

@@ -1,10 +1,14 @@
 package signer
 
+type Mapper interface {
+	Map() map[string]string
+}
+
 type SignerData interface {
 	SetApiKey(string)
 	SetTimestamp()
 	SetSignature(string)
-	Map() map[string]string
+	Mapper
 }
 
 type Signer interface {
