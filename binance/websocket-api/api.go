@@ -60,7 +60,7 @@ func request[reqData any, resultData any](ctx context.Context, api *API, params 
 		return wrap.Wrap(data), nil
 	}
 
-	return wrap.Nil[resultData](), fmt.Errorf("request failed with status: %d, error: %s", result.Status, result.Result)
+	return wrap.Nil[resultData](), fmt.Errorf("request failed with status: %d, error: %s", result.Status, result.Error)
 }
 
 func (api *API) getResult(ctx context.Context, id string) *models.WsAPIResult {
