@@ -27,7 +27,6 @@ func TestGenEd25519Keys(t *testing.T) {
 		t.Errorf("err: %v", err)
 		return
 	}
-
 	publicBytes, err := x509.MarshalPKIXPublicKey(publickey)
 	if err != nil {
 		t.Errorf("err: %v", err)

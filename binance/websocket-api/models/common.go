@@ -33,6 +33,27 @@ type WsAPIResult struct {
 	Status     int               `json:"status"`
 	Result     json.RawMessage   `json:"result"`
 	RateLimits []*WsAPIRateLimit `json:"rateLimits"`
+	Error      *WsAPIResultError `json:"error,omitempty"`
+}
+
+/*
+	"error": {
+	  "code": -2010,
+	  "msg": "Account has insufficient balance for requested action."
+	},
+*/
+
+type WsAPIResultError struct {
+	Code int64  `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+func (e *WsAPIResultError) String() string {
+	if e == nil {
+		return "nil"
+	}
+
+	return fmt.Sprintf("[%d]%s", e.Code, e.Msg)
 }
 
 func (r *WsAPIResult) String() string {
@@ -72,4 +93,4 @@ func (p *Sign) Map() map[string]string {
 		"apiKey":    p.ApiKey,
 		"timestamp": fmt.Sprintf("%d", p.Timestamp),
 	}
-} 
+}
