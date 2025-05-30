@@ -22,13 +22,12 @@ func TestGenEd25519Keys(t *testing.T) {
 		return
 	}
 
-	
 	privateBytes, err := x509.MarshalPKCS8PrivateKey(privatekey)
 	if err != nil {
 		t.Errorf("err: %v", err)
 		return
 	}
-	
+
 	publicBytes, err := x509.MarshalPKIXPublicKey(publickey)
 	if err != nil {
 		t.Errorf("err: %v", err)
@@ -51,7 +50,7 @@ func TestAccountStatus(t *testing.T) {
 	if testing.Short() {
 		t.Skip("跳过需要环境变量和网络连接的测试")
 	}
-	
+
 	ctx := context.TODO()
 	logger := defaultlogger.New(defaultlogger.DefaultConfig())
 	logger.Init()
@@ -77,7 +76,7 @@ func TestWsAPI(t *testing.T) {
 	if testing.Short() {
 		t.Skip("跳过需要环境变量和网络连接的测试")
 	}
-	
+
 	ctx := context.TODO()
 	logger := defaultlogger.New(defaultlogger.DefaultConfig())
 	logger.Init()
@@ -117,8 +116,12 @@ func TestWsAPI(t *testing.T) {
 func getTestEnv(t *testing.T) (string, string) {
 	apiKey := os.Getenv("BINANCE_API_KEY")
 	secretKey := os.Getenv("BINANCE_SECRET_KEY")
-	if apiKey == "" || secretKey == "" {
-		t.Skip("请设置 BINANCE_API_KEY 和 BINANCE_SECRET_KEY 环境变量")
+	if apiKey == "" {
+		t.Skip("请设置 BINANCE_API_KEY 环境变量")
+	}
+
+	if secretKey == "" {
+		t.Skip("请设置 BINANCE_SECRET_KEY 环境变量")
 	}
 
 	return apiKey, secretKey
@@ -128,7 +131,7 @@ func TestAuth(t *testing.T) {
 	if testing.Short() {
 		t.Skip("跳过需要环境变量和网络连接的测试")
 	}
-	
+
 	apiKey, secretKey := getTestEnv(t)
 
 	// 创建日志记录器
@@ -194,13 +197,13 @@ func TestExchangeInfo(t *testing.T) {
 	ctx := context.TODO()
 	logger := defaultlogger.New(defaultlogger.DefaultConfig())
 	logger.Init()
-  
+
 	variables.SetIsTest()
 	client := New(ctx, logger, "", "")
 	defer client.Stop()
 
-	info, err :=client.ExchangeInfo(ctx, &models.WsExchangeInfoParamsData{SymbolStatus: "TRADING",Permissions: []string{"SPOT"}})
-	if err!=nil{
+	info, err := client.ExchangeInfo(ctx, &models.WsExchangeInfoParamsData{SymbolStatus: "TRADING", Permissions: []string{"SPOT"}})
+	if err != nil {
 		t.Errorf("获取交易所信息失败: %v", err)
 		return
 	}
@@ -211,7 +214,7 @@ func TestOrderTest(t *testing.T) {
 	if testing.Short() {
 		t.Skip("跳过需要环境变量和网络连接的测试")
 	}
-	
+
 	ctx := context.TODO()
 	logger := defaultlogger.New(defaultlogger.DefaultConfig())
 	logger.Init()
@@ -239,4 +242,57 @@ func TestOrderTest(t *testing.T) {
 		return
 	}
 	logger.Info("测试下单成功")
+}
+
+func getAccount(ctx context.Context, t *testing.T, client *API) {
+	account, err := client.AccountStatus(ctx, &models.WsAccountStatusParamsData{OmitZeroBalances: true})
+	if err != nil {
+		t.Errorf("获取账户信息失败: %v", err)
+		return
+	}
+
+	t.Logf("Acount: %+#v", account.Unwrap())
+}
+
+func TestPlaceOrder(t *testing.T) {
+	if testing.Short() {
+		t.Skip("跳过需要环境变量和网络连接的测试")
+	}
+	variables.SetIsTest()
+	// variables.SetProxy("http://127.0.0.1:7890")
+	variables.SetProxy("env")
+
+	ctx := context.TODO()
+	logger := defaultlogger.New(defaultlogger.DefaultConfig())
+	logger.Init()
+
+	// 获取 API Key 和 Secret Key
+	apiKey, secretKey := getTestEnv(t)
+
+	// 创建客户端，应该自动进行身份验证
+	client := New(ctx, logger, apiKey, secretKey)
+	defer client.Stop()
+
+	getAccount(ctx, t, client)
+
+	// 测试下单
+	// price := "100000"
+	quantity := "10"
+	order, err := client.Order(ctx, &models.WsOrderParamsData{
+		Symbol: "BTCUSDT",
+		Side:   models.BUY,
+		Type:   models.MARKET,
+		// TimeInForce: variables.Ptr(models.GTC),
+		// Price:    &price,
+		// Quantity:      &quantity,
+		QuoteOrderQty:    &quantity,
+		NewOrderRespType: variables.Ptr("FULL"),
+	})
+	if err != nil {
+		t.Errorf("测试下单失败: %v", err)
+		return
+	}
+	logger.Info("测试下单成功")
+	logger.Infof("order: %+#v", order.Unwrap())
+	getAccount(ctx, t, client)
 }

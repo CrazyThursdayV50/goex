@@ -113,28 +113,37 @@ func NewWsOrderParams() *WsOrderParams {
 
 // WsOrderResultData WebSocket API 下单响应数据
 type WsOrderResultData struct {
-	Symbol                  string `json:"symbol"`
-	OrderId                 int64  `json:"orderId"`
-	OrderListId             int64  `json:"orderListId"`
-	ClientOrderId           string `json:"clientOrderId"`
-	TransactTime            int64  `json:"transactTime"`
-	Price                   string `json:"price"`
-	OrigQty                 string `json:"origQty"`
-	ExecutedQty             string `json:"executedQty"`
-	CummulativeQuoteQty     string `json:"cummulativeQuoteQty"`
-	Status                  string `json:"status"`
-	TimeInForce             string `json:"timeInForce"`
-	Type                    string `json:"type"`
-	Side                    string `json:"side"`
-	WorkingTime             int64  `json:"workingTime"`
-	SelfTradePreventionMode string `json:"selfTradePreventionMode"`
-	IcebergQty              string `json:"icebergQty,omitempty"`
-	StopPrice               string `json:"stopPrice,omitempty"`
-	StrategyId              int64  `json:"strategyId,omitempty"`
-	StrategyType            int64  `json:"strategyType,omitempty"`
-	TrailingDelta           int64  `json:"trailingDelta,omitempty"`
-	PreventedMatchId        int64  `json:"preventedMatchId,omitempty"`
-	PreventedQuantity       string `json:"preventedQuantity,omitempty"`
+	Symbol                  string                  `json:"symbol"`
+	OrderId                 int64                   `json:"orderId"`
+	OrderListId             int64                   `json:"orderListId"`
+	ClientOrderId           string                  `json:"clientOrderId"`
+	TransactTime            int64                   `json:"transactTime"`
+	Price                   string                  `json:"price"`
+	OrigQty                 string                  `json:"origQty"`
+	ExecutedQty             string                  `json:"executedQty"`
+	CummulativeQuoteQty     string                  `json:"cummulativeQuoteQty"`
+	Status                  string                  `json:"status"`
+	TimeInForce             string                  `json:"timeInForce"`
+	Type                    string                  `json:"type"`
+	Side                    string                  `json:"side"`
+	WorkingTime             int64                   `json:"workingTime"`
+	SelfTradePreventionMode string                  `json:"selfTradePreventionMode"`
+	IcebergQty              string                  `json:"icebergQty,omitempty"`
+	StopPrice               string                  `json:"stopPrice,omitempty"`
+	StrategyId              int64                   `json:"strategyId,omitempty"`
+	StrategyType            int64                   `json:"strategyType,omitempty"`
+	TrailingDelta           int64                   `json:"trailingDelta,omitempty"`
+	PreventedMatchId        int64                   `json:"preventedMatchId,omitempty"`
+	PreventedQuantity       string                  `json:"preventedQuantity,omitempty"`
+	Fills                   []WsOrderResultDataFill `json:"fills,omitempty"`
+}
+
+type WsOrderResultDataFill struct {
+	Price           string `json:"price"`
+	Quantity        string `json:"qty"`
+	Commission      string `json:"commission"`
+	CommissionAsset string `json:"commissionAsset"`
+	TradeId         int64  `json:"tradeId"`
 }
 
 // WsTestOrderParams WebSocket API 测试下单请求
@@ -144,4 +153,4 @@ func NewWsTestOrderParams() *WsTestOrderParams {
 	return &WsTestOrderParams{
 		Method: "order.test",
 	}
-} 
+}
