@@ -9,38 +9,38 @@ import (
 
 type ParamsData struct {
 	Symbol            string          `json:"symbol"`
-	ListClientOrderID *string         `json:"listClientOrderId"`
+	ListClientOrderID *string         `json:"listClientOrderId,omitempty"`
 	Side              order.OrderSide `json:"side"`
 	Quantity          string          `json:"quantity"`
 
 	AboveType           order.OrderType      `json:"aboveType"`
-	AboveClientOrderID  *string              `json:"aboveClientOrderId"`
-	AboveIcebergQty     *string              `json:"aboveIcebergQty"`
-	AbovePrice          *string              `json:"abovePrice"`
-	AboveStopPrice      *string              `json:"aboveStopPrice"`
-	AboveTrailingDelta  *string              `json:"aboveTrailingDelta"`
-	AboveTimeInForce    *order.TimeInForce   `json:"aboveTimeInForce"`
-	AboveStrategyID     *string              `json:"aboveStrategyID"`
-	AboveStrategyType   *int64               `json:"aboveStrategyType"`
-	AbovePegPriceType   *order.PegPriceType  `json:"abovePegPriceType"`
-	AbovePegOffsetType  *order.PegOffsetType `json:"abovePegOffsetType"`
-	AbovePegOffsetValue *int64               `json:"abovePegOffsetValue"`
+	AboveClientOrderID  *string              `json:"aboveClientOrderId,omitempty"`
+	AboveIcebergQty     *string              `json:"aboveIcebergQty,omitempty"`
+	AbovePrice          *string              `json:"abovePrice,omitempty"`
+	AboveStopPrice      *string              `json:"aboveStopPrice,omitempty"`
+	AboveTrailingDelta  *string              `json:"aboveTrailingDelta,omitempty"`
+	AboveTimeInForce    *order.TimeInForce   `json:"aboveTimeInForce,omitempty"`
+	AboveStrategyID     *string              `json:"aboveStrategyID,omitempty"`
+	AboveStrategyType   *int64               `json:"aboveStrategyType,omitempty"`
+	AbovePegPriceType   *order.PegPriceType  `json:"abovePegPriceType,omitempty"`
+	AbovePegOffsetType  *order.PegOffsetType `json:"abovePegOffsetType,omitempty"`
+	AbovePegOffsetValue *int64               `json:"abovePegOffsetValue,omitempty"`
 
 	BelowType           order.OrderType      `json:"belowType"`
-	BelowClientOrderID  *string              `json:"belowClientOrderId"`
-	BelowIcebergQty     *string              `json:"belowIcebergQty"`
-	BelowPrice          *string              `json:"belowPrice"`
-	BelowStopPrice      *string              `json:"belowStopPrice"`
-	BelowTrailingDelta  *string              `json:"belowTrailingDelta"`
-	BelowTimeInForce    *order.TimeInForce   `json:"belowTimeInForce"`
-	BelowStrategyID     *string              `json:"belowStrategyID"`
-	BelowStrategyType   *int64               `json:"belowStrategyType"`
-	BelowPegPriceType   *order.PegPriceType  `json:"belowPegPriceType"`
-	BelowPegOffsetType  *order.PegOffsetType `json:"belowPegOffsetType"`
-	BelowPegOffsetValue *int64               `json:"belowPegOffsetValue"`
+	BelowClientOrderID  *string              `json:"belowClientOrderId,omitempty"`
+	BelowIcebergQty     *string              `json:"belowIcebergQty,omitempty"`
+	BelowPrice          *string              `json:"belowPrice,omitempty"`
+	BelowStopPrice      *string              `json:"belowStopPrice,omitempty"`
+	BelowTrailingDelta  *string              `json:"belowTrailingDelta,omitempty"`
+	BelowTimeInForce    *order.TimeInForce   `json:"belowTimeInForce,omitempty"`
+	BelowStrategyID     *string              `json:"belowStrategyID,omitempty"`
+	BelowStrategyType   *int64               `json:"belowStrategyType,omitempty"`
+	BelowPegPriceType   *order.PegPriceType  `json:"belowPegPriceType,omitempty"`
+	BelowPegOffsetType  *order.PegOffsetType `json:"belowPegOffsetType,omitempty"`
+	BelowPegOffsetValue *int64               `json:"belowPegOffsetValue,omitempty"`
 
-	NewOrderRespType        *order.OrderRespType           `json:"newOrderRespType"`
-	SelfTradePreventionMode *order.SelfTradePreventionMode `json:"selfTradePreventionMode"`
+	NewOrderRespType        *order.OrderRespType           `json:"newOrderRespType,omitempty"`
+	SelfTradePreventionMode *order.SelfTradePreventionMode `json:"selfTradePreventionMode,omitempty"`
 
 	models.Sign
 }
