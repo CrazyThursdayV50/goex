@@ -162,7 +162,7 @@ func (api *API) Run(ctx context.Context) error {
 		api.secretKey = privatekey.(ed25519.PrivateKey)
 
 		// 发送认证请求
-		logonData, err := api.Logon(ctx)
+		logonData, err := api.Session().Logon(ctx)
 		if err != nil {
 			api.logger.Errorf("WebSocket API 认证失败: %v", err)
 			return err

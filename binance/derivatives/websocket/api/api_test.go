@@ -30,7 +30,7 @@ func Setup(t *testing.T) {
 	initAPI(t)
 }
 
-func TestLogon(t *testing.T) {
+func TestSession(t *testing.T) {
 	Setup(t)
 	ctx := context.TODO()
 
@@ -39,4 +39,18 @@ func TestLogon(t *testing.T) {
 	if err != nil {
 		t.Fatalf("logon failed: %v", err)
 	}
+
+	status, err := api.Session().Status(ctx)
+	if err != nil {
+		t.Fatalf("logon failed: %v", err)
+	}
+
+	t.Logf("session status: %+v", status)
+
+	logout, err := api.Session().Logout(ctx)
+	if err != nil {
+		t.Fatalf("logon failed: %v", err)
+	}
+
+	t.Logf("session logout: %+v", logout)
 }
