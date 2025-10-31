@@ -1,9 +1,7 @@
-github.com/CrazyThursdayV50/pkgo v0.2.2 h1:YOstiL8SzvKZQ+gpNwtQFbyK+fqEbzJgTwqn6tmzH+8=
-github.com/CrazyThursdayV50/pkgo v0.2.2/go.mod h1:nC7UgjMJ+I7Qnuv0J4BQ4fw6O7ebgEhrFkIPKqG06Bo=
-github.com/CrazyThursdayV50/pkgo v0.2.3-0.20251030065931-591fd5e6bc7b h1:pgLz2JHyYQyq6MOFgUPZct1BBo8pTf8cke3eRrxKySU=
-github.com/CrazyThursdayV50/pkgo v0.2.3-0.20251030065931-591fd5e6bc7b/go.mod h1:nC7UgjMJ+I7Qnuv0J4BQ4fw6O7ebgEhrFkIPKqG06Bo=
-github.com/CrazyThursdayV50/pkgo v0.2.3-0.20251030114728-64d7b644b4be h1:ZBaXc38LzSzqjJo8ejqnWhLT+2KyzNKDjAJb0//cqGg=
-github.com/CrazyThursdayV50/pkgo v0.2.3-0.20251030114728-64d7b644b4be/go.mod h1:nC7UgjMJ+I7Qnuv0J4BQ4fw6O7ebgEhrFkIPKqG06Bo=
+github.com/CrazyThursdayV50/pkgo v0.2.3-0.20251031050739-87088e0485da h1:rzLi0szP+Tlk8PM39GzSrXOK941ghYbNEAcnldPJ6QQ=
+github.com/CrazyThursdayV50/pkgo v0.2.3-0.20251031050739-87088e0485da/go.mod h1:lJ71cVPynRNXGJnP8oY1dfgUF1wQZ2hoUX1tKQHgMyA=
+github.com/CrazyThursdayV50/pkgo v0.2.3-0.20251105100052-d0a001501596 h1:qcBGyBrNwgfYRmR30KrP+gj2inm/aK/+4/oqamhCmAA=
+github.com/CrazyThursdayV50/pkgo v0.2.3-0.20251105100052-d0a001501596/go.mod h1:lJ71cVPynRNXGJnP8oY1dfgUF1wQZ2hoUX1tKQHgMyA=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -27,6 +25,12 @@ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
+github.com/tidwall/gjson v1.18.0 h1:FIDeeyB800efLX89e5a8Y0BNH+LOngJyGrIWxG2FKQY=
+github.com/tidwall/gjson v1.18.0/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=
+github.com/tidwall/match v1.1.1 h1:+Ho715JplO36QYgwN9PGYNhgZvoUSc9X2c80KVTi+GA=
+github.com/tidwall/match v1.1.1/go.mod h1:eRSPERbgtNPcGhD8UCthc6PmLEQXEWd3PRB5JTxsfmM=
+github.com/tidwall/pretty v1.2.0 h1:RWIZEg2iJ8/g6fDDYzMpobmaoGh5OLl4AXtGUGPcqCs=
+github.com/tidwall/pretty v1.2.0/go.mod h1:ITEVvHYasfjBbM0u2Pg8T2nJnzm8xPwvNhhsoaGGjNU=
 go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
 go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
 go.uber.org/multierr v1.10.0 h1:S0h4aNzvfcFsC3dRF1jLoaov7oRaKqRGC/pUEJ2yvPQ=
