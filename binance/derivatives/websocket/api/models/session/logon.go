@@ -9,15 +9,15 @@ type LogonData struct {
 }
 
 // implement Mapper
-func (p *LogonData) Map() map[string]string {
-	m := p.Sign.Map()
+func (d *LogonData) Map() map[string]string {
+	m := d.Sign.Map()
 	return m
 }
 
-type LogonParams = models.Request[*LogonData]
+type LogonRequest = models.Request[*LogonData]
 
-func Logon() *LogonParams {
-	return &LogonParams{
+func Logon() *LogonRequest {
+	return &LogonRequest{
 		Method: "session.logon",
 	}
 }

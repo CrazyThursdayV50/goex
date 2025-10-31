@@ -13,5 +13,3 @@ func ParsePartialDepth(stream string) string {
 		return ""
 	}
 }
-
-func Ptr[T any](v T) *T { return &v }

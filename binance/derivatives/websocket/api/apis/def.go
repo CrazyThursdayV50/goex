@@ -179,10 +179,10 @@ func (api *API) Run(ctx context.Context) error {
 	return nil
 }
 
-func request[reqData any, resultData any](ctx context.Context, api *API, params *models.Request[reqData], dst *resultData) error {
-	params.ID = api.reqID()
+func request[reqData any, resultData any](ctx context.Context, api *API, req *models.Request[reqData], dst *resultData) error {
+	req.ID = api.reqID()
 
-	data, err := json.JSON().Marshal(params)
+	data, err := json.JSON().Marshal(req)
 	if err != nil {
 		return err
 	}
@@ -192,7 +192,7 @@ func request[reqData any, resultData any](ctx context.Context, api *API, params 
 		return err
 	}
 
-	result := api.GetResult(ctx, params.ID)
+	result := api.GetResult(ctx, req.ID)
 	if result == nil {
 		return errors.New("request timeout")
 	}

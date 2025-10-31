@@ -7,22 +7,27 @@ import (
 
 // Sign 签名基础结构
 type Sign struct {
-	APIKEY    string `json:"apiKey"`
-	Timestamp int64  `json:"timestamp"`
-	Signature string `json:"signature"`
+	APIKEY    *string `json:"apiKey,omitempty"`
+	Timestamp int64   `json:"timestamp"`
+	Signature *string `json:"signature,omitempty"`
 }
 
 // implement Mapper
 func (p *Sign) Map() map[string]string {
-	return map[string]string{
-		"apiKey":    p.APIKEY,
+	var m = map[string]string{
 		"timestamp": fmt.Sprintf("%d", p.Timestamp),
 	}
+
+	if p.APIKEY != nil {
+		m["apiKey"] = *p.APIKEY
+	}
+
+	return m
 }
 
 // implement SignerData
 func (p *Sign) SetAPIKEY(key string) {
-	p.APIKEY = key
+	p.APIKEY = &key
 }
 
 func (p *Sign) SetTimestamp() {
@@ -30,5 +35,5 @@ func (p *Sign) SetTimestamp() {
 }
 
 func (p *Sign) SetSignature(sig string) {
-	p.Signature = sig
+	p.Signature = &sig
 }

@@ -15,6 +15,7 @@ import (
 	"github.com/CrazyThursdayV50/goex/binance/spot/websocket-api/models/klines"
 	orderModels "github.com/CrazyThursdayV50/goex/binance/spot/websocket-api/models/order"
 	"github.com/CrazyThursdayV50/goex/binance/variables"
+	"github.com/CrazyThursdayV50/goex/infra/utils"
 	"github.com/CrazyThursdayV50/pkgo/log/sugar"
 )
 
@@ -107,7 +108,7 @@ func TestWsAPI(t *testing.T) {
 		Side:   orderModels.BUY,
 		Type:   orderModels.MARKET,
 		// TimeInForce:   variables.Ptr(models.FOK),
-		QuoteOrderQty: variables.Ptr("10"),
+		QuoteOrderQty: utils.Ptr("10"),
 	})
 	if err != nil {
 		t.Errorf("下单失败: %v", err)
@@ -262,7 +263,7 @@ func TestOrderTest(t *testing.T) {
 		Symbol:      "BTCUSDT",
 		Side:        orderModels.BUY,
 		Type:        orderModels.LIMIT,
-		TimeInForce: variables.Ptr(orderModels.GTC),
+		TimeInForce: utils.Ptr(orderModels.GTC),
 		Price:       &price,
 		Quantity:    &quantity,
 	})
