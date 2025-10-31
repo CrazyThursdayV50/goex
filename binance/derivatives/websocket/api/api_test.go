@@ -134,7 +134,7 @@ func TestTrade(t *testing.T) {
 		stopPrice := orderPrice.Mul(decimal.NewFromFloat(1.1)).StringFixed(2)
 
 		var data trade.PlaceData
-		data.SingleLongMarketTakeProfit("BTCUSDT", "0.001", stopPrice)
+		data.SingleLongTakeProfitMarket("BTCUSDT", "0.001", stopPrice)
 
 		result, err := api.Trade().PlaceOrder(context.TODO(), &data)
 
@@ -147,7 +147,7 @@ func TestTrade(t *testing.T) {
 	t.Run("StopLossLongMarket", func(t *testing.T) {
 		stopPrice := orderPrice.Mul(decimal.NewFromFloat(0.9)).StringFixed(2)
 		var data trade.PlaceData
-		data.SingleLongMarketStopLoss("BTCUSDT", "0.001", stopPrice)
+		data.SingleLongStopLossMarket("BTCUSDT", "0.001", stopPrice)
 		result, err := api.Trade().PlaceOrder(context.TODO(), &data)
 
 		if err != nil {
@@ -158,7 +158,7 @@ func TestTrade(t *testing.T) {
 
 	t.Run("ReduceLongMarket", func(t *testing.T) {
 		var data trade.PlaceData
-		data.SingleReduceLong("BTCUSDT", "0.001")
+		data.SingleReduceLongMarket("BTCUSDT", "0.001")
 
 		result, err := api.Trade().PlaceOrder(context.TODO(), &data)
 		if err != nil {

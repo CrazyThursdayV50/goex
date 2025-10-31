@@ -74,49 +74,50 @@ func (d *PlaceData) SingleOpenShortMarket(symbol, quantity string) {
 }
 
 // 单向持仓 多仓 减仓
-func (d *PlaceData) SingleReduceLong(symbol, quantity string) {
+func (d *PlaceData) SingleReduceLongMarket(symbol, quantity string) {
 	d.SingleOpenShortMarket(symbol, quantity)
 	d.ReduceOnly = utils.Ptr(REDUCE_ONLY_TRUE)
 }
 
 // 单向持仓 空仓 减仓
-func (d *PlaceData) SingleReduceShort(symbol, quantity string) {
+func (d *PlaceData) SingleReduceShortMarket(symbol, quantity string) {
 	d.SingleOpenLongMarket(symbol, quantity)
 	d.ReduceOnly = utils.Ptr(REDUCE_ONLY_TRUE)
 }
 
 // 单向持仓 多仓 止盈
-func (d *PlaceData) SingleLongMarketTakeProfit(symbol, quantity, stopPrice string) *PlaceData {
-	d.SingleReduceLong(symbol, quantity)
+func (d *PlaceData) SingleLongTakeProfitMarket(symbol, quantity, stopPrice string) *PlaceData {
+	d.SingleReduceLongMarket(symbol, quantity)
 	d.OrderType = TYPE_TAKE_PROFIT_MARKET
 	d.StopPrice = utils.Ptr(stopPrice)
 	return d
 }
 
 // 单向持仓 多仓 止损
-func (d *PlaceData) SingleLongMarketStopLoss(symbol, quantity, stopPrice string) *PlaceData {
-	d.SingleReduceLong(symbol, quantity)
+func (d *PlaceData) SingleLongStopLossMarket(symbol, quantity, stopPrice string) *PlaceData {
+	d.SingleReduceLongMarket(symbol, quantity)
 	d.OrderType = TYPE_STOP_MARKET
 	d.StopPrice = utils.Ptr(stopPrice)
 	return d
 }
 
 // 单向持仓 空仓 止盈
-func (d *PlaceData) SingleShortMarketTakeProfit(symbol, quantity, stopPrice string) *PlaceData {
-	d.SingleReduceShort(symbol, quantity)
+func (d *PlaceData) SingleShortTakeProfitMarket(symbol, quantity, stopPrice string) *PlaceData {
+	d.SingleReduceShortMarket(symbol, quantity)
 	d.OrderType = TYPE_TAKE_PROFIT_MARKET
 	d.StopPrice = utils.Ptr(stopPrice)
 	return d
 }
 
 // 单向持仓 空仓 止损
-func (d *PlaceData) SingleShortMarketStopLoss(symbol, quantity, stopPrice string) *PlaceData {
-	d.SingleReduceShort(symbol, quantity)
+func (d *PlaceData) SingleShortStopLossMarket(symbol, quantity, stopPrice string) *PlaceData {
+	d.SingleReduceShortMarket(symbol, quantity)
 	d.OrderType = TYPE_STOP_MARKET
 	d.StopPrice = utils.Ptr(stopPrice)
 	return d
 }
 
+// TODO: 双向持仓
 var _ iface.SignerData = (*PlaceData)(nil)
 
 func (d *PlaceData) Map() map[string]string {
