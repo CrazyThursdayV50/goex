@@ -1,11 +1,7 @@
-package signer
-
-type Mapper interface {
-	Map() map[string]string
-}
+package iface
 
 type SignerData interface {
-	SetApiKey(string)
+	SetAPIKEY(string)
 	SetTimestamp()
 	SetSignature(string)
 	Mapper

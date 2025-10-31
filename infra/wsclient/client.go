@@ -28,7 +28,10 @@ func NewClient(
 		client.WithLogger(logger),
 		client.WithURL(url),
 		client.WithDefaultCompress(true),
-		client.WithPingHandler(variables.WriteControlTimeout(), nil),
+		client.WithPingHandler(variables.WriteControlTimeout(), func(string) error {
+			logger.Debugf("Recv: PING")
+			return nil
+		}),
 		client.WithPongHandler(variables.WriteControlTimeout(), func(string) error {
 			logger.Debugf("Recv: PONG")
 			return nil

@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"encoding"
+	j "encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -11,12 +12,8 @@ import (
 	"github.com/CrazyThursdayV50/pkgo/json"
 )
 
-type ResultData interface {
-	UnmarlshalJSON([]byte) error
-}
-
 type WsRequest interface {
-	Do(ctx context.Context) (builtin.UnWrapper[ResultData], error)
+	Do(ctx context.Context) (builtin.UnWrapper[j.Unmarshaler], error)
 }
 
 // WsAPIParams WebSocket API 请求参数基础结构
@@ -104,7 +101,7 @@ func (p *Sign) SetTimestamp() {
 	p.Timestamp = time.Now().UnixMilli()
 }
 
-func (p *Sign) SetApiKey(apikey string) {
+func (p *Sign) SetAPIKEY(apikey string) {
 	p.ApiKey = apikey
 }
 

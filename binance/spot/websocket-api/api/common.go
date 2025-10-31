@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/CrazyThursdayV50/goex/binance/iface"
 	"github.com/CrazyThursdayV50/goex/binance/spot/websocket-api/models"
-	"github.com/CrazyThursdayV50/goex/binance/spot/websocket-api/signer"
+	"github.com/CrazyThursdayV50/goex/infra/sign"
 	"github.com/CrazyThursdayV50/pkgo/builtin"
 	"github.com/CrazyThursdayV50/pkgo/json"
 	"github.com/google/uuid"
@@ -66,10 +67,10 @@ func (api *API) reqID() string {
 	return uuid.New().String()
 }
 
-func (api *API) Sign(signerData signer.SignerData) {
-	signerData.SetApiKey(api.apiKey)
+func (api *API) Sign(signerData iface.SignerData) {
+	signerData.SetAPIKEY(api.apiKey)
 	signerData.SetTimestamp()
 	paramsmap := signerData.Map()
-	signature := signer.SignEd25519(paramsmap, api.secretKey)
+	signature := sign.Ed25519(paramsmap, api.secretKey)
 	signerData.SetSignature(signature)
 }

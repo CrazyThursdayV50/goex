@@ -1,4 +1,4 @@
-package signer
+package sign
 
 import (
 	"crypto/ed25519"
@@ -9,7 +9,7 @@ import (
 )
 
 // Sign 通用签名函数，使用 Ed25519 私钥对参数进行签名
-func SignEd25519(params map[string]string, secretkey ed25519.PrivateKey) string {
+func Ed25519(params map[string]string, secretkey ed25519.PrivateKey) string {
 	// 1. 按照键名对参数排序
 	var keys []string
 	for k := range params {
