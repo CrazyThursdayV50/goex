@@ -56,7 +56,7 @@ func Test(t *testing.T) {
 
 	testAPI("Ping", t, api.Ping)
 	testAPI("ServerTime", t, api.ServerTime)
-	testAPI("Klines", t, func(ctx context.Context) (*klines.Result, error) {
+	testAPI("Klines", t, func(ctx context.Context) (klines.Result, error) {
 		return api.Klines(ctx, &klines.Params{
 			Symbol:    env.symbol,
 			Interval:  env.interval,

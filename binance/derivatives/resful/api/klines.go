@@ -11,7 +11,7 @@ const (
 	klinesPath = "/fapi/v1/klines"
 )
 
-func (api *API) Klines(ctx context.Context, params *klines.Params) (result *klines.Result, err error) {
+func (api *API) Klines(ctx context.Context, params *klines.Params) (result klines.Result, err error) {
 	paramsMap, err := utils.MapString(params)
 	if err != nil {
 		return nil, err
