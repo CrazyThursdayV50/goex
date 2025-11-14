@@ -5,7 +5,7 @@ type Params struct {
 	Interval  string `json:"interval"`
 	StartTime int64  `json:"startTime,string,omitempty"`
 	EndTime   int64  `json:"endTime,string,omitempty"`
-	Limit     int    `json:"limit,string"`
+	Limit     int    `json:"limit,string,omitempty"`
 }
 
 /*
