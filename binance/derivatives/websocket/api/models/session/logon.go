@@ -4,16 +4,7 @@ import "github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/api/model
 
 type LogonData struct {
 	RecvWindow int64 `json:"recvWindow,omitempty"`
-	// models.Sign
 }
-
-// // implement Mapper
-// func (d *LogonData) Map() map[string]string {
-// 	m := d.Sign.Map()
-// 	return m
-// }
-
-// type LogonRequest = models.Request[*LogonData]
 
 func Logon() *models.Request {
 	return &models.Request{
