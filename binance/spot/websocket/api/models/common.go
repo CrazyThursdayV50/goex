@@ -5,15 +5,6 @@ import (
 	"time"
 )
 
-// RateLimit API速率限制信息
-type RateLimit struct {
-	RateLimitType string `json:"rateLimitType"`
-	Interval      string `json:"interval"`
-	IntervalNum   int    `json:"intervalNum"`
-	Limit         int    `json:"limit"`
-	Count         int    `json:"count"`
-}
-
 // Sign 签名基础结构
 type Sign struct {
 	ApiKey    string `json:"apiKey"`

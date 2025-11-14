@@ -67,9 +67,7 @@ func (api *API) Stop() {
 }
 
 func (api *API) Sign(requestData any) (map[string]any, error) {
-	return api.
-		api.
-		Sign(requestData)
+	return api.api.Sign(requestData)
 }
 
 // func (api *API) GetResult(ctx context.Context, id string) *models.Result {

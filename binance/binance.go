@@ -1,7 +1,7 @@
 package binance
 
 import (
-	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/api"
+	"github.com/CrazyThursdayV50/goex/binance/derivatives"
 	"github.com/CrazyThursdayV50/goex/binance/spot"
 )
 
@@ -16,6 +16,6 @@ func (Binance) Spot() spot.SpotEntry {
 	return spot.New()
 }
 
-func (Binance) Derivatives() api.API {
-	return api.New()
+func (Binance) Derivatives() derivatives.DerivativesEntry {
+	return derivatives.DerivativesEntry{}
 }

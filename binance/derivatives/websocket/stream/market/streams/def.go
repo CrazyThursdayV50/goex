@@ -72,7 +72,7 @@ func (s *Stream) handler(ctx context.Context, l log.Logger, i int, b []byte, f f
 	results := gjson.GetManyBytes(b, "stream", "data")
 	// 是 combined stream 消息
 	if results[0].Exists() {
-		s.sendEventData(ctx, results[0].String(), []byte(results[1].Str))
+		s.sendEventData(ctx, results[0].String(), []byte(results[1].String()))
 		return client.TextMessage, nil
 	}
 
@@ -106,8 +106,11 @@ func New(logger log.Logger) *Stream {
 	return &stream
 }
 
-func (s *Stream) Run(ctx context.Context) {
-	s.wsclient.Run(ctx)
+func (s *Stream) Run(ctx context.Context) error {
+	for _, w := range s.workers {
+		w.Run(ctx)
+	}
+	return s.wsclient.Run(ctx)
 }
 
 func request[reqParams any](stream *Stream, req *models.Request[reqParams]) error {

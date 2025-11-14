@@ -4,6 +4,7 @@ import (
 	"encoding"
 	"fmt"
 
+	"github.com/CrazyThursdayV50/goex/binance/models/ratelimits"
 	"github.com/CrazyThursdayV50/pkgo/json"
 )
 
@@ -12,7 +13,7 @@ type WsAPIResult struct {
 	Id         string                     `json:"id"`
 	Status     int                        `json:"status"`
 	Result     json.RawMessage            `json:"result"`
-	RateLimits []*RateLimit               `json:"rateLimits"`
+	RateLimits []ratelimits.RateLimit     `json:"rateLimits"`
 	Err        *WsAPIResultError          `json:"error,omitempty"`
 	InnerData  encoding.BinaryUnmarshaler `json:"-"`
 }

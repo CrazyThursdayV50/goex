@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"fmt"
+	"net/url"
 	"slices"
 	"strings"
 	"time"
@@ -14,7 +15,8 @@ import (
 )
 
 // Sign 通用签名函数，使用 Ed25519 私钥对参数进行签名
-func Ed25519(params map[string]any, secretkey ed25519.PrivateKey) {
+// 返回的  payload 用于需要签名的 GET 请求
+func Ed25519(params map[string]any, secretkey ed25519.PrivateKey) string {
 	// 1. 按照键名对参数排序
 	var keys []string
 	for k := range params {
@@ -40,6 +42,7 @@ func Ed25519(params map[string]any, secretkey ed25519.PrivateKey) {
 	// 5. 将签名转换为 base64 字符串
 	sign64 := base64.StdEncoding.EncodeToString(signature)
 	params["signature"] = sign64
+	return payload + "&" + fmt.Sprintf("signature=%s", url.QueryEscape(sign64))
 }
 
 func ParseSecretEd25519(apikey, secret string) (ed25519.PrivateKey, error) {
@@ -67,5 +70,18 @@ func NewSignerFuncEd25519(apikey string, secretKey ed25519.PrivateKey) iface.Sig
 		params["apiKey"] = apikey
 		Ed25519(params, secretKey)
 		return params, nil
+	}
+}
+
+// 用于 REST API 需要签名的 GET 请求
+func NewSignerFuncEd25519QueryParams(apikey string, secretKey ed25519.PrivateKey) func(any) (string, error) {
+	return func(data any) (string, error) {
+		params, err := utils.MapAny(data)
+		if err != nil {
+			return "", err
+		}
+
+		params["timestamp"] = time.Now().UnixMilli()
+		return Ed25519(params, secretKey), nil
 	}
 }

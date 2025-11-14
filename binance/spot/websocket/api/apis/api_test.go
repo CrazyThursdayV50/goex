@@ -13,6 +13,7 @@ import (
 	"github.com/CrazyThursdayV50/goex/binance/spot/websocket/api/models/exchangeinfo"
 	"github.com/CrazyThursdayV50/goex/binance/spot/websocket/api/models/klines"
 	"github.com/CrazyThursdayV50/goex/binance/spot/websocket/api/models/order"
+	"github.com/CrazyThursdayV50/goex/binance/variables"
 	"github.com/CrazyThursdayV50/goex/infra/utils"
 	"github.com/CrazyThursdayV50/pkgo/log"
 )
@@ -68,6 +69,7 @@ func setupLogger(t *testing.T) {
 }
 
 func setupClient(t *testing.T) {
+	variables.SetIsTest()
 	symbol = "BTCUSDT"
 
 	var err error

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/models"
-	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/models/kline"
+	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/models/klines"
 )
 
 const (
@@ -20,7 +20,7 @@ func StreamName(symbol, contractType, interval string) string {
 
 type Result struct {
 	models.BaseResult
-	Symbol   string          `json:"ps"`
-	Contract string          `json:"ct"`
-	Data     kline.KlineData `json:"k"`
+	Symbol   string           `json:"ps"`
+	Contract string           `json:"ct"`
+	Data     klines.KlineData `json:"k"`
 }

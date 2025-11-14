@@ -9,11 +9,11 @@ type API struct{}
 
 func New() API { return API{} }
 
-func (a *API) Public(logger log.Logger) *apis.API {
+func (a API) Public(logger log.Logger) *apis.API {
 	api, _ := apis.New(logger, "", "")
 	return api
 }
 
-func (a *API) Private(logger log.Logger, apiKey, secretKey string) (*apis.API, error) {
+func (a API) Private(logger log.Logger, apiKey, secretKey string) (*apis.API, error) {
 	return apis.New(logger, apiKey, secretKey)
 }

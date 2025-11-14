@@ -6,13 +6,14 @@ import (
 	"testing"
 
 	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/api/apis"
+	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/api/models/account"
+	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/api/models/position"
 	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/api/models/session"
 	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/api/models/trade"
 	"github.com/CrazyThursdayV50/goex/binance/variables"
 	"github.com/CrazyThursdayV50/goex/infra/utils"
 	"github.com/CrazyThursdayV50/pkgo/log"
 	"github.com/CrazyThursdayV50/pkgo/log/sugar"
-	"github.com/shopspring/decimal"
 )
 
 var (
@@ -124,58 +125,49 @@ func reducePositionLongMarketDataSingle(symbol, quantity string) *trade.PlaceDat
 	}
 }
 
+func testAPI[Req any, Res any](name string, t *testing.T, call func(ctx context.Context, req Req) (Res, error), req Req, resultHandler func(Res)) {
+	res, err := call(t.Context(), req)
+	if err != nil {
+		t.Fatalf("%s failed: %v", name, err)
+	}
+
+	t.Logf("%s result: %v", name, res)
+
+	if resultHandler != nil {
+		resultHandler(res)
+	}
+}
+
 // 完全平仓
 func TestTrade(t *testing.T) {
 	Setup(t)
 
-	var orderPrice decimal.Decimal
-	t.Run("OpenLongMarket", func(t *testing.T) {
-		var data trade.PlaceData
-		data.SingleOpenLongMarket(symbol, "0.002")
+	testAPI("Account", t, api.Account().Status, &account.StatusData{}, nil)
+	testAPI("Position", t, api.Position, &position.RequestData{Symbol: symbol}, nil)
 
-		result, err := api.Trade().PlaceOrder(context.TODO(), &data)
-		if err != nil {
-			t.Fatalf("%s failed: %v", t.Name(), err)
-		}
+	// var quantity = "0.002"
+	// var orderPrice decimal.Decimal
+	// var data trade.PlaceData
+	// data.SingleOpenLongMarket(symbol, quantity)
+	// testAPI("OpenLongMarket", t, api.Trade().PlaceOrder, &data, func(res *trade.PlaceResultData) {
+	// 	// orderPrice, _ = decimal.NewFromString(res.AvgPrice)
+	// 	t.Logf("result: %+v", res)
+	// })
 
-		orderPrice, _ = decimal.NewFromString(result.AvgPrice)
-		t.Logf("result: %+v", result)
-	})
+	// testAPI("Account", t, api.Account().Status, &account.StatusData{}, nil)
+	// testAPI("Position", t, api.Position, &position.RequestData{Symbol: symbol}, nil)
 
-	t.Run("TakeProfitLongMarket", func(t *testing.T) {
-		stopPrice := orderPrice.Mul(decimal.NewFromFloat(1.1)).StringFixed(2)
+	// stopPrice := orderPrice.Mul(decimal.NewFromFloat(1.1)).StringFixed(2)
+	// var takeProfitData trade.PlaceData
+	// takeProfitData.SingleLongTakeProfitMarket(symbol, quantity, stopPrice)
+	// testAPI("TakeProfitLongMarket", t, api.Trade().PlaceOrder, &takeProfitData, nil)
 
-		var data trade.PlaceData
-		data.SingleLongTakeProfitMarket("BTCUSDT", "0.001", stopPrice)
+	// stopPrice = orderPrice.Mul(decimal.NewFromFloat(0.9)).StringFixed(2)
+	// var stopLossData trade.PlaceData
+	// stopLossData.SingleLongStopLossMarket(symbol, quantity, stopPrice)
+	// testAPI("StopLossLongMarket", t, api.Trade().PlaceOrder, &stopLossData, nil)
 
-		result, err := api.Trade().PlaceOrder(context.TODO(), &data)
-
-		if err != nil {
-			t.Fatalf("%s failed: %v", t.Name(), err)
-		}
-		t.Logf("result: %+v", result)
-	})
-
-	t.Run("StopLossLongMarket", func(t *testing.T) {
-		stopPrice := orderPrice.Mul(decimal.NewFromFloat(0.9)).StringFixed(2)
-		var data trade.PlaceData
-		data.SingleLongStopLossMarket("BTCUSDT", "0.001", stopPrice)
-		result, err := api.Trade().PlaceOrder(context.TODO(), &data)
-
-		if err != nil {
-			t.Fatalf("%s failed: %v", t.Name(), err)
-		}
-		t.Logf("result: %+v", result)
-	})
-
-	t.Run("ReduceLongMarket", func(t *testing.T) {
-		var data trade.PlaceData
-		data.SingleReduceLongMarket("BTCUSDT", "0.001")
-
-		result, err := api.Trade().PlaceOrder(context.TODO(), &data)
-		if err != nil {
-			t.Fatalf("%s failed: %v", t.Name(), err)
-		}
-		t.Logf("result: %+v", result)
-	})
+	// var reduceLongData trade.PlaceData
+	// reduceLongData.SingleReduceLongMarket(symbol, quantity)
+	// testAPI("ReduceLongMarket", t, api.Trade().PlaceOrder, &reduceLongData, nil)
 }

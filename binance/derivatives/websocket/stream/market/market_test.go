@@ -5,8 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/models/kline"
-	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/models/kline/continuous"
+	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/models/klines"
+	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/models/klines/continuous"
+	markprice "github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/models/markPrice"
 	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/models/subscribe"
 	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/streams"
 	"github.com/CrazyThursdayV50/goex/infra/websocket/client"
@@ -78,25 +79,13 @@ func Setup(t *testing.T) *StreamEnv {
 	return &env
 }
 
-func (env *StreamEnv) handleKlineStream() func(*kline.KlineData, error) {
-	return func(r *kline.KlineData, err error) {
+func handleStream[Data any](env *StreamEnv, name string) func(Data, error) {
+	return func(d Data, err error) {
 		if err != nil {
-			env.logger.Errorf("HandleKline failed: %v", err)
+			env.logger.Errorf("%s failed: %v", name, err)
 			return
 		}
-
-		env.logger.Debugf("HandleKline: %+v", r)
-	}
-}
-
-func (env *StreamEnv) handleContinuousKlineStream() func(*kline.KlineData, error) {
-	return func(r *kline.KlineData, err error) {
-		if err != nil {
-			env.logger.Errorf("HandleContinuousKline failed: %v", err)
-			return
-		}
-
-		env.logger.Debugf("HandleContinuousKline: %+v", r)
+		env.logger.Debugf("%s: %+v", name, d)
 	}
 }
 
@@ -113,16 +102,20 @@ func TestStream(t *testing.T) {
 		return client.TextMessage, nil
 	})
 
-	stream.HandleKlineStreamEvent(env.handleKlineStream())
-	stream.HandleContinuousKlineStreamEvent(env.handleContinuousKlineStream())
+	stream.HandleKlineStreamEvent(handleStream[*klines.Result](env, klines.Event))
+	stream.HandleContinuousKlineStreamEvent(handleStream[*klines.Result](env, klines.Event))
+	stream.HandleMarkPriceStreamEvent(handleStream[*markprice.Result](env, markprice.Event))
 	stream.Run(ctx)
 	<-connected
 
+	streams := subscribe.RequestParams{
+		klines.StreamName(env.symbol, env.interval),
+		continuous.StreamName(env.symbol, env.contract.String(), env.interval),
+		markprice.StreamName(env.symbol),
+	}
+
 	t.Run("Subscribe", func(t *testing.T) {
-		err := stream.Subscribe(t.Context(), subscribe.RequestParams{
-			kline.StreamName(env.symbol, env.interval),
-			continuous.StreamName(env.symbol, env.contract.String(), env.interval),
-		})
+		err := stream.Subscribe(t.Context(), streams)
 
 		if err != nil {
 			t.Fatalf("subscribe failed: %v", err)
@@ -132,11 +125,7 @@ func TestStream(t *testing.T) {
 	})
 
 	t.Run("Unsubscribe", func(t *testing.T) {
-		err := stream.Unsubscribe(t.Context(), subscribe.RequestParams{
-			kline.StreamName(env.symbol, env.interval),
-			continuous.StreamName(env.symbol, env.contract.String(), env.interval),
-		})
-
+		err := stream.Unsubscribe(t.Context(), streams)
 		if err != nil {
 			t.Fatalf("unsubscribe failed: %v", err)
 		}
@@ -159,29 +148,39 @@ func TestCombined(t *testing.T) {
 		return client.TextMessage, nil
 	})
 
-	stream.HandleKlineCombinedData(kline.StreamName(env.symbol, env.interval), env.handleKlineStream())
-	stream.HandleContinuousKlineCombinedData(continuous.StreamName(env.symbol, env.contract.String(), env.interval), env.handleContinuousKlineStream())
+	stream.HandleKlineCombinedData(
+		klines.StreamName(env.symbol, env.interval),
+		handleStream[*klines.Result](env, klines.StreamName(env.symbol, env.interval)),
+	)
+
+	stream.HandleContinuousKlineCombinedData(
+		continuous.StreamName(env.symbol, env.contract.String(), env.interval),
+		handleStream[*klines.Result](env, continuous.StreamName(env.symbol, env.contract.String(), env.interval)),
+	)
+
+	stream.HandleMarkPriceCombinedData(markprice.StreamName(env.symbol), handleStream[*markprice.Result](env, markprice.StreamName(env.symbol)))
+
 	stream.Run(ctx)
 	<-connected
 
+	streams := subscribe.RequestParams{
+		klines.StreamName(env.symbol, env.interval),
+		continuous.StreamName(env.symbol, env.contract.String(), env.interval),
+		markprice.StreamName(env.symbol),
+	}
+
 	t.Run("Subscribe", func(t *testing.T) {
-		err := stream.Subscribe(t.Context(), subscribe.RequestParams{
-			kline.StreamName(env.symbol, env.interval),
-			continuous.StreamName(env.symbol, env.contract.String(), env.interval),
-		})
+		err := stream.Subscribe(t.Context(), streams)
 
 		if err != nil {
 			t.Fatalf("subscribe failed: %v", err)
 		}
 
-		time.Sleep(time.Second * 5)
+		time.Sleep(time.Second * 3)
 	})
 
 	t.Run("Unsubscribe", func(t *testing.T) {
-		err := stream.Unsubscribe(t.Context(), subscribe.RequestParams{
-			kline.StreamName(env.symbol, env.interval),
-			continuous.StreamName(env.symbol, env.contract.String(), env.interval),
-		})
+		err := stream.Unsubscribe(t.Context(), streams)
 
 		if err != nil {
 			t.Fatalf("subscribe failed: %v", err)

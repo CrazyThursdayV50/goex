@@ -1,17 +1,29 @@
 package derivatives
 
 import (
-	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/api"
-	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream"
+	"github.com/CrazyThursdayV50/goex/binance/derivatives/resful/api"
+	wsapi "github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/api"
+	wsstream "github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream"
+	"github.com/CrazyThursdayV50/pkgo/log"
+	"github.com/CrazyThursdayV50/pkgo/request/resty"
+	"github.com/CrazyThursdayV50/pkgo/trace"
 )
 
-type Derivatives struct {
+type DerivativesEntry struct{}
+
+func (DerivativesEntry) WebSocketAPI() wsapi.API {
+	return wsapi.New()
 }
 
-func (Derivatives) WebSocketAPI() api.API {
-	return api.New()
+func (DerivativesEntry) WebSocketStream() wsstream.Stream {
+	return wsstream.New()
 }
 
-func (Derivatives) WebSocketStream() stream.Stream {
-	return stream.New()
+func (DerivativesEntry) Restful(
+	cfg *resty.Config,
+	logger log.Logger,
+	tracer trace.Tracer,
+	apiKey, secret string,
+) (*api.API, error) {
+	return api.New(cfg, logger, tracer, apiKey, secret)
 }
