@@ -109,12 +109,11 @@ func New(logger log.Logger) *Stream {
 	return &stream
 }
 
-func (s *Stream) Run(ctx context.Context) {
-	s.wsclient.Run(ctx)
-
+func (s *Stream) Run(ctx context.Context) error {
 	for _, w := range s.workers {
 		w.Run(ctx)
 	}
+	return s.wsclient.Run(ctx)
 }
 
 func request(stream *Stream, req *models.Request) error {

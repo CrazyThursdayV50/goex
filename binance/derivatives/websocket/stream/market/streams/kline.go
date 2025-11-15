@@ -36,7 +36,7 @@ func (s *Stream) HandleKlineStreamEvent(f func(*klines.KlineData, error)) *Strea
 	return s
 }
 
-func (s *Stream) HandleKlineCombinedData(streamName string, f func(*klines.KlineData, error)) *Stream {
+func (s *Stream) HandleKlineCombinedData(streamName string, f func(*klines.Result, error)) *Stream {
 	s.RegisterEventHandler(
 		streamName,
 		CreateBytesHandler(f),
@@ -52,7 +52,7 @@ func (s *Stream) HandleContinuousKlineStreamEvent(f func(*klines.KlineData, erro
 	return s
 }
 
-func (s *Stream) HandleContinuousKlineCombinedData(streamName string, f func(*klines.KlineData, error)) *Stream {
+func (s *Stream) HandleContinuousKlineCombinedData(streamName string, f func(*klines.Result, error)) *Stream {
 	s.RegisterEventHandler(
 		streamName,
 		CreateBytesHandler(f),

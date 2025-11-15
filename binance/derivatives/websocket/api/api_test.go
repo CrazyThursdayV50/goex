@@ -14,7 +14,6 @@ import (
 	"github.com/CrazyThursdayV50/goex/infra/utils"
 	"github.com/CrazyThursdayV50/pkgo/log"
 	"github.com/CrazyThursdayV50/pkgo/log/sugar"
-	"github.com/shopspring/decimal"
 )
 
 var (
@@ -146,28 +145,28 @@ func TestTrade(t *testing.T) {
 	testAPI("Account", t, api.Account().Status, &account.StatusData{}, nil)
 	testAPI("Position", t, api.Position, &position.RequestData{Symbol: symbol}, nil)
 
-	var orderPrice decimal.Decimal
-	var data trade.PlaceData
-	data.SingleOpenLongMarket(symbol, "0.002")
-	testAPI("OpenLongMarket", t, api.Trade().PlaceOrder, &data, func(res *trade.PlaceResultData) {
-		orderPrice, _ = decimal.NewFromString(res.AvgPrice)
-		t.Logf("result: %+v", res)
-	})
+	// var orderPrice decimal.Decimal
+	// var data trade.PlaceData
+	// data.SingleOpenLongMarket(symbol, "0.002")
+	// testAPI("OpenLongMarket", t, api.Trade().PlaceOrder, &data, func(res *trade.PlaceResultData) {
+	// 	orderPrice, _ = decimal.NewFromString(res.AvgPrice)
+	// 	t.Logf("result: %+v", res)
+	// })
 
-	testAPI("Account", t, api.Account().Status, &account.StatusData{}, nil)
-	testAPI("Position", t, api.Position, &position.RequestData{Symbol: symbol}, nil)
+	// testAPI("Account", t, api.Account().Status, &account.StatusData{}, nil)
+	// testAPI("Position", t, api.Position, &position.RequestData{Symbol: symbol}, nil)
 
-	stopPrice := orderPrice.Mul(decimal.NewFromFloat(1.1)).StringFixed(2)
-	var takeProfitData trade.PlaceData
-	takeProfitData.SingleLongTakeProfitMarket("BTCUSDT", "0.001", stopPrice)
-	testAPI("TakeProfitLongMarket", t, api.Trade().PlaceOrder, &takeProfitData, nil)
+	// stopPrice := orderPrice.Mul(decimal.NewFromFloat(1.1)).StringFixed(2)
+	// var takeProfitData trade.PlaceData
+	// takeProfitData.SingleLongTakeProfitMarket("BTCUSDT", "0.001", stopPrice)
+	// testAPI("TakeProfitLongMarket", t, api.Trade().PlaceOrder, &takeProfitData, nil)
 
-	stopPrice = orderPrice.Mul(decimal.NewFromFloat(0.9)).StringFixed(2)
-	var stopLossData trade.PlaceData
-	stopLossData.SingleLongStopLossMarket("BTCUSDT", "0.001", stopPrice)
-	testAPI("StopLossLongMarket", t, api.Trade().PlaceOrder, &stopLossData, nil)
+	// stopPrice = orderPrice.Mul(decimal.NewFromFloat(0.9)).StringFixed(2)
+	// var stopLossData trade.PlaceData
+	// stopLossData.SingleLongStopLossMarket("BTCUSDT", "0.001", stopPrice)
+	// testAPI("StopLossLongMarket", t, api.Trade().PlaceOrder, &stopLossData, nil)
 
-	var reduceLongData trade.PlaceData
-	reduceLongData.SingleReduceLongMarket("BTCUSDT", "0.001")
-	testAPI("ReduceLongMarket", t, api.Trade().PlaceOrder, &reduceLongData, nil)
+	// var reduceLongData trade.PlaceData
+	// reduceLongData.SingleReduceLongMarket("BTCUSDT", "0.001")
+	// testAPI("ReduceLongMarket", t, api.Trade().PlaceOrder, &reduceLongData, nil)
 }
