@@ -21,6 +21,7 @@ func (c *Client) Stop()                         { c.WsClient.Stop() }
 func (c *Client) Run(ctx context.Context) error { return c.WsClient.Run(ctx) }
 
 var PingMessage = client.PingMessage
+var PongMessage = client.PongMessage
 var TextMessage = client.TextMessage
 var BinaryMessage = client.BinaryMessage
 
@@ -39,11 +40,11 @@ func NewClient(
 		client.WithURL(url),
 		client.WithDefaultCompress(true),
 		client.WithPingHandler(variables.WriteControlTimeout(), func(string) error {
-			logger.Debugf("Recv: PING")
+			logger.Debugf("[%s]Recv: PING", url)
 			return nil
 		}),
 		client.WithPongHandler(variables.WriteControlTimeout(), func(string) error {
-			logger.Debugf("Recv: PONG")
+			logger.Debugf("[%s]Recv: PONG", url)
 			return nil
 		}),
 		client.WithPingLoop(pingLoop),

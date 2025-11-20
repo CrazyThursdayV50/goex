@@ -1,8 +1,8 @@
 package streams
 
 import (
+	"github.com/CrazyThursdayV50/pkgo/goo"
 	"github.com/CrazyThursdayV50/pkgo/json"
-	"github.com/CrazyThursdayV50/pkgo/worker"
 )
 
 func CreateBytesHandler[T any](fn func(T, error)) func([]byte) {
@@ -16,12 +16,14 @@ func CreateBytesHandler[T any](fn func(T, error)) func([]byte) {
 // 注册不同 event 的handler
 func (s *Stream) RegisterEventHandler(stream string, handler func([]byte)) {
 	var dataChan = make(chan []byte, 100)
+	if handler != nil {
+		goo.Go(func() {
+			for data := range dataChan {
+				handler(data)
+			}
+		})
+	}
 
-	worker, _ := worker.New(stream, handler)
-	worker.WithTrigger(dataChan)
-	worker.WithGraceful(true)
-
-	s.workers[stream] = worker
 	s.dataChans[stream] = dataChan
 }
 

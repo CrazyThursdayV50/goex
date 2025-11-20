@@ -3,13 +3,13 @@ package streams
 import (
 	"context"
 	"fmt"
+	"sync"
 	"sync/atomic"
 
 	"github.com/CrazyThursdayV50/goex/binance/spot/websocket/stream/market/models"
 	"github.com/CrazyThursdayV50/goex/infra/websocket/client"
 	"github.com/CrazyThursdayV50/pkgo/json"
 	"github.com/CrazyThursdayV50/pkgo/log"
-	"github.com/CrazyThursdayV50/pkgo/worker"
 	"github.com/tidwall/gjson"
 )
 
@@ -18,14 +18,13 @@ type Stream struct {
 	logger   log.Logger
 	wsclient *client.Client
 
-	workers   map[string]*worker.Worker[[]byte]
+	l         sync.RWMutex
 	dataChans map[string]chan []byte
 }
 
 func (s *Stream) Clone() *Stream {
 	var stream Stream
 	stream.logger = s.logger
-	stream.workers = make(map[string]*worker.Worker[[]byte])
 	stream.dataChans = make(map[string]chan []byte)
 	stream.HandleUnexpected(func(b []byte) {
 		stream.logger.Warnf("unexpected data: %s", b)
@@ -45,7 +44,9 @@ func (s *Stream) sendUnexpectedData(ctx context.Context, data []byte) {
 }
 
 func (s *Stream) sendEventData(ctx context.Context, event string, data []byte) {
+	s.l.RLock()
 	ch, ok := s.dataChans[event]
+	s.l.RUnlock()
 	if !ok {
 		s.logger.Warnf("event chan not found: %s", event)
 		return
@@ -53,6 +54,10 @@ func (s *Stream) sendEventData(ctx context.Context, event string, data []byte) {
 
 	select {
 	case <-ctx.Done():
+		close(ch)
+		s.l.Lock()
+		delete(s.dataChans, event)
+		s.l.Unlock()
 	case ch <- data:
 	}
 }
@@ -101,7 +106,6 @@ func (s *Stream) handler(ctx context.Context, l log.Logger, i int, b []byte, f f
 func New(logger log.Logger) *Stream {
 	var stream Stream
 	stream.dataChans = make(map[string]chan []byte)
-	stream.workers = make(map[string]*worker.Worker[[]byte])
 	stream.logger = logger
 	stream.HandleUnexpected(func(b []byte) {
 		logger.Warnf("unexpected data: %s", b)
@@ -110,9 +114,6 @@ func New(logger log.Logger) *Stream {
 }
 
 func (s *Stream) Run(ctx context.Context) error {
-	for _, w := range s.workers {
-		w.Run(ctx)
-	}
 	return s.wsclient.Run(ctx)
 }
 

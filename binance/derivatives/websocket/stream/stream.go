@@ -1,7 +1,8 @@
 package stream
 
 import (
-	"github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/streams"
+	market "github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/market/streams"
+	user "github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/stream/user/streams"
 	"github.com/CrazyThursdayV50/pkgo/log"
 )
 
@@ -11,6 +12,10 @@ func New() Stream {
 	return Stream{}
 }
 
-func (Stream) Market(logger log.Logger) *streams.Stream {
-	return streams.New(logger)
+func (Stream) Market(logger log.Logger) *market.Stream {
+	return market.New(logger)
+}
+
+func (Stream) User(logger log.Logger, listenKey string) *user.Stream {
+	return user.New(logger, listenKey)
 }

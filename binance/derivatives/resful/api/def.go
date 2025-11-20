@@ -219,3 +219,77 @@ func (n *NONE) get(ctx context.Context, path string, params any, result any) err
 
 	return nil
 }
+
+type USERSTREAM struct {
+	baseURL string
+	apikey  string
+	client  *resty.Client
+}
+
+func (api *API) userstream() *USERSTREAM {
+	return &USERSTREAM{
+		baseURL: api.baseURL,
+		apikey:  api.apiKey,
+		client:  api.client,
+	}
+}
+
+func (n *USERSTREAM) post(ctx context.Context, path string, params any, result any) error {
+	url := n.baseURL + path
+
+	var resultError *models.ResultError
+	_, err := n.client.Request(ctx).
+		SetError(&resultError).
+		SetResult(result).
+		SetHeader("X-MBX-APIKEY", n.apikey).
+		Post(url)
+	if err != nil {
+		return err
+	}
+
+	if resultError != nil {
+		return resultError
+	}
+
+	return nil
+}
+
+func (n *USERSTREAM) put(ctx context.Context, path string, params any, result any) error {
+	url := n.baseURL + path
+
+	var resultError *models.ResultError
+	_, err := n.client.Request(ctx).
+		SetError(&resultError).
+		SetResult(result).
+		SetHeader("X-MBX-APIKEY", n.apikey).
+		Put(url)
+	if err != nil {
+		return err
+	}
+
+	if resultError != nil {
+		return resultError
+	}
+
+	return nil
+}
+
+func (n *USERSTREAM) delete(ctx context.Context, path string, params any, result any) error {
+	url := n.baseURL + path
+
+	var resultError *models.ResultError
+	_, err := n.client.Request(ctx).
+		SetError(&resultError).
+		SetResult(result).
+		SetHeader("X-MBX-APIKEY", n.apikey).
+		Delete(url)
+	if err != nil {
+		return err
+	}
+
+	if resultError != nil {
+		return resultError
+	}
+
+	return nil
+}

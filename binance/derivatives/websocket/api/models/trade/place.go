@@ -49,7 +49,7 @@ type PlaceData struct {
 
 func (d *PlaceData) Base(symbol string) {
 	d.Symbol = symbol
-	d.NewOrderRespType = utils.Ptr(NEW_ORDER_RESP_TYPE_RESULT)
+	d.NewOrderRespType = utils.Ptr(NEW_ORDER_RESP_TYPE_ACK)
 }
 
 func (d *PlaceData) SingleOpenLongMarket(symbol, quantity string) {
@@ -114,8 +114,71 @@ func (d *PlaceData) SingleShortStopLossMarket(symbol, quantity, stopPrice string
 	return d
 }
 
-// TODO: 双向持仓
-// var _ iface.SignerData = (*PlaceData)(nil)
+// buy long 开多
+func (d *PlaceData) DualOpenLongMarket(symbol, quantity string) {
+	d.Base(symbol)
+	d.PositionSide = utils.Ptr(POSITION_SIDE_LONG)
+	d.OrderSide = SIDE_BUY
+	d.OrderType = TYPE_MARKET
+	d.Quantity = utils.Ptr(quantity)
+	d.ReduceOnly = nil
+}
+
+// sell short 开空
+func (d *PlaceData) DualOpenShortMarket(symbol, quantity string) {
+	d.Base(symbol)
+	d.PositionSide = utils.Ptr(POSITION_SIDE_SHORT)
+	d.OrderSide = SIDE_SELL
+	d.OrderType = TYPE_MARKET
+	d.Quantity = utils.Ptr(quantity)
+	d.ReduceOnly = nil
+}
+
+// 双向持仓 多仓 减仓
+// sell long 平多
+func (d *PlaceData) DualReduceLongMarket(symbol, quantity string) {
+	d.DualOpenLongMarket(symbol, quantity)
+	d.OrderSide = SIDE_SELL
+}
+
+// 双向持仓 空仓 减仓
+// buy short 平空
+func (d *PlaceData) DualReduceShortMarket(symbol, quantity string) {
+	d.DualOpenShortMarket(symbol, quantity)
+	d.OrderSide = SIDE_BUY
+}
+
+// 双向持仓 多仓 止盈
+func (d *PlaceData) DualLongTakeProfitMarket(symbol, quantity, stopPrice string) *PlaceData {
+	d.DualReduceLongMarket(symbol, quantity)
+	d.OrderType = TYPE_TAKE_PROFIT_MARKET
+	d.StopPrice = utils.Ptr(stopPrice)
+	return d
+}
+
+// 双向持仓 多仓 止损
+func (d *PlaceData) DualLongStopLossMarket(symbol, quantity, stopPrice string) *PlaceData {
+	d.DualReduceLongMarket(symbol, quantity)
+	d.OrderType = TYPE_STOP_MARKET
+	d.StopPrice = utils.Ptr(stopPrice)
+	return d
+}
+
+// 双向持仓 空仓 止盈
+func (d *PlaceData) DualShortTakeProfitMarket(symbol, quantity, stopPrice string) *PlaceData {
+	d.DualReduceShortMarket(symbol, quantity)
+	d.OrderType = TYPE_TAKE_PROFIT_MARKET
+	d.StopPrice = utils.Ptr(stopPrice)
+	return d
+}
+
+// 双向持仓 空仓 止损
+func (d *PlaceData) DualShortStopLossMarket(symbol, quantity, stopPrice string) *PlaceData {
+	d.DualReduceShortMarket(symbol, quantity)
+	d.OrderType = TYPE_STOP_MARKET
+	d.StopPrice = utils.Ptr(stopPrice)
+	return d
+}
 
 func Place() *models.Request {
 	return &models.Request{

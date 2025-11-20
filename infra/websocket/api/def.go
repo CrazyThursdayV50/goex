@@ -32,7 +32,7 @@ func New[Req iface.WebsocketRequest, Res iface.WebsocketResult](
 
 		cron.New(
 			cron.WithJob(func() {
-				logger.Debugf("PING sent")
+				logger.Debugf("[%s]PING sent", endpoint)
 				conn.WriteControl(client.PingMessage, nil, time.Now().Add(variables.WriteControlTimeout()))
 			}, time.Second*10),
 			cron.WithLogger(logger),

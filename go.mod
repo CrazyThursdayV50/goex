@@ -3,7 +3,7 @@ module github.com/CrazyThursdayV50/goex
 go 1.24.1
 
 require (
-	github.com/CrazyThursdayV50/pkgo v0.2.3
+	github.com/CrazyThursdayV50/pkgo v0.2.4-0.20251124113806-120ca4f620bd
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/shopspring/decimal v1.4.0
