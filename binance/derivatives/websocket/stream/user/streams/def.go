@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/CrazyThursdayV50/goex/binance/variables"
 	"github.com/CrazyThursdayV50/goex/binance/variables/derivatives"
 	"github.com/CrazyThursdayV50/goex/infra/websocket/client"
 	"github.com/CrazyThursdayV50/pkgo/goo"
 	"github.com/CrazyThursdayV50/pkgo/log"
+	"github.com/gorilla/websocket"
 	"github.com/tidwall/gjson"
 )
 
@@ -99,7 +101,26 @@ func New(logger log.Logger, listenKey string) *Stream {
 		fmt.Sprintf("%s/%s", derivatives.WsStream().Endpoint(), stream.listenkey),
 		variables.GetProxy(),
 		stream.handler,
-		nil,
+		func(done <-chan struct{}, conn *websocket.Conn) {
+			ticker := time.NewTicker(time.Minute * 15)
+			for {
+				select {
+				case <-done:
+					return
+
+				case t := <-ticker.C:
+					conn.WriteControl(
+						client.PingMessage,
+						fmt.Appendf(nil, "%d", t.UnixMilli()),
+						time.Now().Add(time.Second*30))
+
+					conn.WriteControl(
+						client.PongMessage,
+						fmt.Appendf(nil, "%d", t.UnixMilli()),
+						time.Now().Add(time.Second*30))
+				}
+			}
+		},
 	)
 
 	return &stream

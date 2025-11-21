@@ -40,11 +40,11 @@ func NewClient(
 		client.WithURL(url),
 		client.WithDefaultCompress(true),
 		client.WithPingHandler(variables.WriteControlTimeout(), func(string) error {
-			logger.Debugf("Recv: PING")
+			logger.Debugf("[%s]Recv: PING", url)
 			return nil
 		}),
 		client.WithPongHandler(variables.WriteControlTimeout(), func(string) error {
-			logger.Debugf("Recv: PONG")
+			logger.Debugf("[%s]Recv: PONG", url)
 			return nil
 		}),
 		client.WithPingLoop(pingLoop),
