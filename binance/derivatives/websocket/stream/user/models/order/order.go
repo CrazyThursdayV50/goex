@@ -9,7 +9,7 @@ const (
 
 type Event struct {
 	models.BaseEvent
-	EventData
+	Data EventData `json:"o"`
 }
 
 // OrderUpdateEvent 订单更新事件结构体
