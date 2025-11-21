@@ -49,7 +49,7 @@ type PlaceData struct {
 
 func (d *PlaceData) Base(symbol string) {
 	d.Symbol = symbol
-	d.NewOrderRespType = utils.Ptr(NEW_ORDER_RESP_TYPE_RESULT)
+	d.NewOrderRespType = utils.Ptr(NEW_ORDER_RESP_TYPE_ACK)
 }
 
 func (d *PlaceData) SingleOpenLongMarket(symbol, quantity string) {
