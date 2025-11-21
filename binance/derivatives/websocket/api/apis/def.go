@@ -14,7 +14,8 @@ import (
 )
 
 type API struct {
-	api *api.API[*models.Request, *models.Result]
+	apikey string
+	api    *api.API[*models.Request, *models.Result]
 }
 
 func New(logger log.Logger, apikey, secret string) (*API, error) {
@@ -35,7 +36,7 @@ func New(logger log.Logger, apikey, secret string) (*API, error) {
 		Handler,
 	)
 
-	return &API{api}, nil
+	return &API{apikey: apikey, api: api}, nil
 }
 
 func Handler(ch chan *models.Result) client.MessageHandler {

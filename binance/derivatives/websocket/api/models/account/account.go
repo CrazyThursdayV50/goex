@@ -2,7 +2,9 @@ package account
 
 import "github.com/CrazyThursdayV50/goex/binance/derivatives/websocket/api/models"
 
-type StatusData struct{}
+type StatusData struct {
+	APIKEY string `json:"apiKey"`
+}
 
 func Status() *models.Request {
 	return &models.Request{
