@@ -22,6 +22,7 @@ const (
 
 type Event struct {
 	models.BaseEvent
+	EventData
 }
 
 // EventData 账户更新事件数据

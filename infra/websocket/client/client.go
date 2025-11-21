@@ -21,6 +21,7 @@ func (c *Client) Stop()                         { c.WsClient.Stop() }
 func (c *Client) Run(ctx context.Context) error { return c.WsClient.Run(ctx) }
 
 var PingMessage = client.PingMessage
+var PongMessage = client.PongMessage
 var TextMessage = client.TextMessage
 var BinaryMessage = client.BinaryMessage
 
