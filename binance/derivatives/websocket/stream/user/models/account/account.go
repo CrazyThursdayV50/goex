@@ -22,7 +22,7 @@ const (
 
 type Event struct {
 	models.BaseEvent
-	EventData
+	Account EventData `json:"a"`
 }
 
 // EventData 账户更新事件数据
